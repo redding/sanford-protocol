@@ -1,9 +1,10 @@
 # Sanford Protocol is a module that describes the current protocol and provides
 # methods for working with it. This file can be mixed in to other classes to
 # allow them to conveniently work with a Sanford server/client.
-#
+
 require 'bson'
 
+require 'sanford-protocol/connection'
 require 'sanford-protocol/version'
 
 module Sanford
