@@ -1,7 +1,6 @@
-require "sanford-protocol/version"
+require 'bson'
 
 module Sanford
   module Protocol
-    # Your code goes here...
   end
 end
