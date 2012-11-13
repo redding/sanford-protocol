@@ -1,12 +1,8 @@
-ENV['SANFORD_PROTOCOL_DEBUG'] = 'yes'
-
 ROOT = File.expand_path('../..', __FILE__)
 
-require 'sanford-protocol'
+ENV['SANFORD_PROTOCOL_DEBUG'] = 'yes'
 
 require 'sanford-protocol/test/fake_socket'
 FakeSocket = Sanford::Protocol::Test::FakeSocket
 
-if defined?(Assert)
-  require 'assert-mocha'
-end
+require 'assert-mocha' if defined?(Assert)
