@@ -3,7 +3,7 @@
 # version, name and params. It provides methods for working with message bodies
 # (hashes) with `parse` and `to_hash`. In addition to this, a request has a
 # `valid?` method, that returns whether it is valid and if it isn't why.
-#
+
 module Sanford::Protocol
 
   class Request
@@ -19,17 +19,17 @@ module Sanford::Protocol
     end
 
     def to_hash
-      { 'version' => self.version,
-        'name'    => self.name,
-        'params'  => self.params
+      { 'version' => @version,
+        'name'    => @name,
+        'params'  => @params
       }
     end
 
     def valid?
-      if !self.name
-        [ false, "The request doesn't contain a name." ]
-      elsif !self.version
+      if !@version
         [ false, "The request doesn't contain a version." ]
+      elsif !@name
+        [ false, "The request doesn't contain a name." ]
       else
         [ true ]
       end
@@ -37,8 +37,10 @@ module Sanford::Protocol
 
     def inspect
       reference = '0x0%x' % (self.object_id << 1)
-      "#<#{self.class}:#{reference} @name=#{self.name.inspect} " \
-      "@version=#{self.version.inspect} @params=#{self.params.inspect}>"
+      "#<#{self.class}:#{reference}"\
+      " @version=#{@version.inspect}"\
+      " @name=#{@name.inspect}"\
+      " @params=#{@params.inspect}>"
     end
 
   end

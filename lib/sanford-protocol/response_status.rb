@@ -1,6 +1,6 @@
 # The Response Status class models a code and optional message. This makes up
 # part of a response and provides methods for building and displaying statuses.
-#
+
 module Sanford::Protocol
 
   class ResponseStatus < Struct.new(:code, :message)
@@ -13,8 +13,8 @@ module Sanford::Protocol
     }.freeze
 
     def initialize(code, message = nil)
-      number = CODES[code.to_sym] || code.to_i
-      super(number, message)
+      code_number = CODES[code.to_sym] || code.to_i
+      super(code_number, message)
     end
 
     def name
@@ -23,7 +23,7 @@ module Sanford::Protocol
     end
 
     def to_s
-      "[#{[ self.code, self.name ].compact.join(', ')}]"
+      "[#{[ code, name ].compact.join(', ')}]"
     end
 
     def inspect

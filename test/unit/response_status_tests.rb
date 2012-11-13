@@ -1,8 +1,9 @@
 require 'assert'
+require 'sanford-protocol/response_status'
 
 class Sanford::Protocol::ResponseStatus
 
-  class BaseTest < Assert::Context
+  class BaseTests < Assert::Context
     desc "Sanford::Protocol::ResponseStatus"
     setup do
       @status = Sanford::Protocol::ResponseStatus.new(200, "OK")

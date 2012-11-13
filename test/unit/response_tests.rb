@@ -1,8 +1,9 @@
 require 'assert'
+require 'sanford-protocol/response'
 
 class Sanford::Protocol::Response
 
-  class BaseTest < Assert::Context
+  class BaseTests < Assert::Context
     desc "Sanford::Protocol::Response"
     setup do
       @response = Sanford::Protocol::Response.new([ 672, 'YAR!' ], { 'something' => true })
@@ -39,7 +40,7 @@ class Sanford::Protocol::Response
 
   # Somewhat of a system test, want to make sure if Response is passed some
   # "fuzzy" args that it will build it's status object as expected
-  class StatusBuildingTest < BaseTest
+  class StatusBuildingTests < BaseTests
 
     should "build a status with it's code set, given an integer" do
       response = Sanford::Protocol::Response.new(574)

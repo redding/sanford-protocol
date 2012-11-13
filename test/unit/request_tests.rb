@@ -1,8 +1,9 @@
 require 'assert'
+require 'sanford-protocol/request'
 
 class Sanford::Protocol::Request
 
-  class BaseTest < Assert::Context
+  class BaseTests < Assert::Context
     desc "Sanford::Protocol::Request"
     setup do
       @request = Sanford::Protocol::Request.new('v1', 'some_service', [ true ])
@@ -39,7 +40,7 @@ class Sanford::Protocol::Request
     end
   end
 
-  class ValidTest < BaseTest
+  class ValidTests < BaseTests
     desc "valid?"
 
     should "return true and no message with a valid request" do
