@@ -10,7 +10,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["collin.redding@me.com", "kelly@kellyredding.com"]
   gem.description   = "Ruby implementation of Sanford's communication protocol."
   gem.summary       = "Ruby implementation of Sanford's communication protocol."
-  gem.homepage      = ""
+  gem.homepage      = "https://github.com/redding/sanford-protocol"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
