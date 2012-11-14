@@ -27,7 +27,11 @@ module Sanford::Protocol::Test
     def initialize(*bytes)
       @out = StringIO.new
       @in  = StringIO.new
-      @in << bytes.join; @in.rewind;
+      reset(*bytes)
+    end
+
+    def reset(*new_bytes)
+      @in << new_bytes.join; @in.rewind;
     end
 
     def in;  @in.string;  end

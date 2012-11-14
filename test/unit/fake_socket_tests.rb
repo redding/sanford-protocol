@@ -12,7 +12,7 @@ class Sanford::Protocol::Test::FakeSocket
     subject { @fs }
 
     should have_cmeths :with_request, :with_msg_body, :with_encoded_msg_body
-    should have_imeths :in, :out
+    should have_imeths :in, :out, :reset
     should have_imeths :recvfrom, :send
 
     should "have no `in` or `out` data by default" do
@@ -43,6 +43,11 @@ class Sanford::Protocol::Test::FakeSocket
 
       assert_kind_of ::Array, recvfrom_data
       assert_equal @in_data, recvfrom_data.first
+    end
+
+    should "reset its `in` data using #reset" do
+      subject.reset('some different in data')
+      assert_equal 'some different in data', subject.in
     end
 
   end
