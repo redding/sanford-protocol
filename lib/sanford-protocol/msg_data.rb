@@ -1,9 +1,9 @@
 module Sanford::Protocol
 
   class BadMessageError < RuntimeError
-    def initialize(bt, message)
+    def initialize(message, bt=nil)
       super(message)
-      set_backtrace(bt)
+      set_backtrace(bt || caller)
     end
   end
 
@@ -29,7 +29,7 @@ module Sanford::Protocol
     def validate!; self; end
 
     def error!(message)
-      raise BadMessageError.new(@called_from, message)
+      raise BadMessageError.new(message, @called_from)
     end
 
   end

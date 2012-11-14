@@ -1,44 +1,47 @@
 # The FakeSocket class can be used to work with Sanford Protocol in a test
 # environment. Instead of passing a real socket, pass an instance of this class.
-# It provides methods for adding to it's "read stream" and viewing what has been
-# written to it's "write stream". For example:
-#
-#     socket = FakeSocket.new
-#     socket.add_to_read_stream(bytes)
-#     connection = Sanford::Protocol::Connection.new(socket)
-#     message = connection.read
-#     # do something, generate new_message
-#     connection.write(new_message)
-#     puts socket.written # => serialized new_message
-#
-module Sanford::Protocol::Test
+# It mimics the socket API that sanford is concerned with.
 
+require 'sanford-protocol'
+require 'sanford-protocol/request'
+
+module Sanford::Protocol::Test
   class FakeSocket
 
-    def initialize
-      @read_stream = StringIO.new
-      @write_stream = StringIO.new
+    def self.with_request(*request_params)
+      request = Sanford::Protocol::Request.new(*request_params)
+      self.with_msg_body(request.to_hash)
     end
 
-    def add_to_read_stream(bytes)
-      @read_stream << bytes
-      @read_stream.rewind
+    def self.with_msg_body(body, size=nil, encoded_version=nil)
+      encoded_body = Sanford::Protocol.msg_body.encode(body)
+      self.with_encoded_msg_body(encoded_body, size, encoded_version)
     end
 
-    def written
-      @write_stream.string
+    def self.with_encoded_msg_body(encoded_body, size=nil, encoded_version=nil)
+      encoded_size    =   Sanford::Protocol.msg_size.encode(size || encoded_body.bytesize)
+      encoded_version ||= Sanford::Protocol.msg_version
+      self.new(encoded_version, encoded_size, encoded_body)
     end
+
+    def initialize(*bytes)
+      @out = StringIO.new
+      @in  = StringIO.new
+      @in << bytes.join; @in.rewind;
+    end
+
+    def in;  @in.string;  end
+    def out; @out.string; end
 
     # Socket methods -- requied by Sanford::Protocol
 
     def recvfrom(number_of_bytes)
-      [ @read_stream.read(number_of_bytes.to_i) ]
+      [ @in.read(number_of_bytes.to_i) ]
     end
 
     def send(bytes, flag)
-      @write_stream << bytes
+      @out << bytes
     end
 
   end
-
 end
