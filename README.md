@@ -108,6 +108,26 @@ message = connection.read
 response = Sanford::Protocol::Response.parse(message)
 ```
 
+## Test Helpers
+
+```ruby
+# fake a socket with some incoming binary
+socket = FakeSocket.new(msg_binary_string)
+connection = Sanford::Protocol::Connection.new(socket)
+msg_data = connection.read
+
+# write some binary to that fake socket and verify it
+connection.write(msg_data)
+puts socket.out # => msg binary string
+
+# create a socket with an incoming request and verify the request
+socket   = FakeSocket.with_request(*request_params)
+msg_data = Sanford::Protocol::Connection.new(socket).read
+request  = Sanford::Protocol::Request.parse(msg_data)
+```
+
+A `FakeSocket` test helper class and an associated `Test::Helpers` module are provided to help test receiving and sending Sanford::Protocol messages.
+
 ## Contributing
 
 1. Fork it

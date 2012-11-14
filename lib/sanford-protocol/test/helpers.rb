@@ -1,4 +1,5 @@
 require 'sanford-protocol/test/fake_socket'
+require 'sanford-protocol/response'
 
 module Sanford::Protocol::Test
 
@@ -9,24 +10,25 @@ module Sanford::Protocol::Test
       FakeSocket.with_request(*args)
     end
 
-    def fake_socket_with_message(*args)
-      FakeSocket.with_message(*args)
+    def fake_socket_with_msg_body(*args)
+      FakeSocket.with_msg_body(*args)
     end
 
-    def fake_socket_with_encoded_message(*args)
-      FakeSocket.with_encoded_message(*args)
+    def fake_socket_with_encoded_msg_body(*args)
+      FakeSocket.with_encoded_msg_body(*args)
     end
 
     def fake_socket_with(*args)
-      FakeSocket.with(*args)
+      FakeSocket.new(*args)
     end
 
-    def read_response_from_fake_socket(fake_socket)
-      socket = FakeSocket.new
-      socket.add_to_read_stream(fake_socket.written)
-      connection = Sanford::Protocol::Connection.new(socket)
-      message = connection.read
-      Sanford::Protocol::Response.parse(message)
+    def read_response_from_fake_socket(from_fake_socket)
+      data = Sanford::Protocol::Connection.new(from_fake_socket).read
+      Sanford::Protocol::Response.parse(data)
+    end
+
+    def read_written_response_from_fake_socket(from_fake_socket)
+      read_response_from_fake_socket(FakeSocket.new(from_fake_socket.out))
     end
 
   end
