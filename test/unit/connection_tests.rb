@@ -9,7 +9,7 @@ class Sanford::Protocol::Connection
       @data = { 'something' => true }
       @encoded_body = Sanford::Protocol.msg_body.encode(@data)
       @encoded_size = Sanford::Protocol.msg_size.encode(@encoded_body.bytesize)
-      @msg = [ @encoded_size, Sanford::Protocol.msg_version,  @encoded_body ].join
+      @msg = [ Sanford::Protocol.msg_version, @encoded_size, @encoded_body ].join
       @socket     = FakeSocket.new
       @connection = Sanford::Protocol::Connection.new(@socket)
     end

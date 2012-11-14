@@ -14,15 +14,13 @@ module Sanford::Protocol
     end
 
     # Message format (see sanford-protocal.rb):
-    # |------ 4B -------|------ 1B -------|-- <msg body size>B --|
-    # | (packed header) | (packed header) | (BSON binary string) |
-    # |  msg body size  |   msg version   |       msg body       |
-
-    # TODO: change protocol and put version as first thing read/written
+    # |------ 1B -------|------ 4B -------|-- <msg body size>B --|
+    # | (static header) | (packed header) | (BSON binary string) |
+    # |   msg version   |  msg body size  |       msg body       |
 
     def read
-      size = MsgSize.new{ @socket.decode msg_size, msg_size.bytes }.validate!.value
       MsgVersion.new{ @socket.read msg_version.bytesize }.validate!
+      size = MsgSize.new{ @socket.decode msg_size, msg_size.bytes }.validate!.value
       return MsgBody.new{ @socket.decode msg_body, size           }.validate!.value
     end
 
@@ -30,7 +28,7 @@ module Sanford::Protocol
       body = @socket.encode msg_body, data
       size = @socket.encode msg_size, body.bytesize
 
-      @socket.write(size, msg_version, body)
+      @socket.write(msg_version, size, body)
     end
 
     class Socket < Struct.new(:tcp_socket)
