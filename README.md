@@ -1,45 +1,57 @@
 # Sanford Protocol
 
-This gem is the ruby implementation for Sanford's communication protocol. It provides Sanford's request and response objects along with an IO object for reading and writing messages.
+This gem is the ruby implementation of the Sanford communication protocol.
 
-## Protocol
+## The Protocol
 
 **Version**: 1
 
-Sanford communicates using a stream of bytes and it converts all data into it's binary format to facilitate this. All Sanford communication falls into the following format:
+Sanford communicates using a binary encoded messages.  Sanford messages are two headers and a body in the format:
 
 ```
-# as a stream of bytes
-[ size, protocol_version, message ]
+|------ 1B -------|------ 4B -------|---- (Body Size)B ----|
+| (packed header) | (packed header) | (BSON binary string) |
+|     Version     |    Body Size    |         Body         |
+|-----------------|-----------------|----------------------|
 ```
 
-The `size` section is always 4 bytes, the `protocol_version` is 1 byte and the message size is encoded in the previous `size` section. The `protocol_version` is used to verify the client and server are using the same version of Sanford's protocol. If they aren't then unexpected errors could occur. The `message` contains either a serialized request or response. All messages are encoded using [BSON](http://bsonspec.org/) and thus are ruby hashes when decoded.
+### Version
 
-### Request
+The first header represents the protocol version in use.  It is 1 byte long and exists to ensure both the client and the server are using talking the same protocol.
 
-A request is made up of 3 parts: the service name, the service version and the params.
+### Body Size
 
-* **service name** - (string) The service that the request is calling. This is used with the service version to find a matching service handler. If one isn't found, then the request is rejected.
-* **service version** - (string) The version of the service that the request is calling. This is used with the service name to find a matching service handler. If one isn't found, then the request is rejected.
-* **params** - Parameters to call the service with. This can be any BSON serializable object.
+The second header represents the size of the message's body.  It is 4 bytes long and tells the receiver how many bytes to read to receive the body.
 
-The service name, version and params are always required. A BSON request should look like:
+### Body
+
+The Body is the content of the message.  It is a [BSON](http://bsonspec.org/) encoded binary string that decodes to a ruby hash.
+
+## Request
+
+A request is made up of 3 required parts: the version, the name, and the params.
+
+* **version** - (string) version of the requested API.
+* **name**    - (string) name of the requested API service.
+* **params**  - (object) data for the service call - can be any BSON serializable object.
+
+Requests are encoded as BSON hashes when transmitted in messages.
 
 ```ruby
-{ 'name':     'some_service',
-  'version':  'v1'
+{ 'version':  'v1',
+  'name':     'some_service',
   'params':   'something'
 }
 ```
 
-### Response
+## Response
 
 A response is made up of 2 parts: the status and the result.
 
-* **status** - (tuple) A number that determines whether the request was successful or not and a message that includes details about the status. See the "Protocol - Status Codes" section further down for a list of all the possible values.
-* **result** - Result of running the service. This can be any BSON serializable object and won't be set if the request wasn't successful.
+* **status** - (tuple, required) A code and message describing the result of the service call.
+* **result** - (object, optional) Result of calling the service. This can be any BSON serializable object.  Typically won't be set if the request is not successful.
 
-A response should always contain a status, but the result is optional. A BSON response should look like:
+Responses are encoded as BSON hashes when transmitted in messages.
 
 ```ruby
 { 'status': [ 200, 'The request was successful.' ]
@@ -47,68 +59,64 @@ A response should always contain a status, but the result is optional. A BSON re
 }
 ```
 
-#### Status Codes
+### Status Codes
 
-This is the list of predefined status codes. In addition to using these, a service can return custom status codes, but they should use a number greater than or equal to 600 to avoid collisions with Sanford's defined status codes. The list contains both the integer value and the name of the status code along with a description of what each code is intended for:
+* `200` - `ok` - The request was successful.
+* `400` - `bad_request` - The request couldn't be read. This is usually because it was not formed correctly. This can mean a number of things, check the response message for details.
+* `404` - `not_found` - The server couldn't find something requested.
+* `500` - `error` - The server errored responding to the request.
 
-* `200` - `success` - The request was successful.
-* `400` - `bad_request` - The request couldn't be read. This is usually because it was not formed correctly. This can mean a number of things, check the response message for details:
-  * The message size couldn't be read or was invalid.
-  * The protocol version couldn't be read or didn't match the servers.
-  * The message body couldn't be deserialized.
-* `404` - `not_found` - The service name didn't match a configured service.
-* `500` - `error` - An error occurred when calling the service. The message attribute of the response should be used to get more details.
+This is the list of predefined status codes. In addition to these, a service can return custom status codes, but they should use a number greater than or equal to 600 to avoid collisions with Sanford's defined status codes.
 
 ## Usage
 
-The Sanford Protocol gem provides the mixin `Sanford::Protocol` that defines helper methods for communicating with a Sanford server. To use it, mix it in to any object:
+`Sanford::Protocol` defines helper methods for encoding and decoding messages.
 
 ```ruby
-class MyObject
-  include Sanford::Protocol
-end
-
-my_object = MyObject.new
-message = { 'something' => true }
-serialized_message = my_object.serialize_message(message)
-my_object.deserialize_message(serialized_message)
+# encode a message
+data = { 'something' => true }
+msg_body = Sanford::Protocol.msg_body.encode(data)
+msg_size = Sanford::Protocol.msg_size.encode(msg_body.bytesize)
+msg = [Sanford::Protocol.msg_version, msg_size, msg_body].join
 ```
-
-Though this can be convenient, there are additional classes included in this gem that can provide more features.
 
 ### Connection
 
-Typically, when working with Sanford's protocol, you'll be using sockets. In this case, the `Sanford::Protocol::Connection` class can be used:
+If you are sending and receiving messages using a tcp socket, use `Sanford::Protocol::Connection`.
 
 ```ruby
-connection = Sanford::Protocol::Connection.new(socket)
-message = connection.read
-# process the message, generate new message
-connection.write(new_message)
+connection = Sanford::Protocol::Connection.new(tcp_socket)
+incoming_data = connection.read
+connection.write(outgoing_data)
 ```
 
-The first thing to note is that the connection class needs to be manually required. Secondly, the `Sanford::Protocol::Connection` class takes a socket and messages can be read and written to it. Though messages can be use directly when read or built manually, it's recommended to use the `Sanford::Protocol::Request` and `Sanford::Protocol::Response` objects instead.
+For incoming messages, it reads them off the socket, validate them, and return the decoded body data.  For outgoing messages, it encodes the message body from given data, adds the appropiate message headers, and writes the message to the socket.
 
 ### Requests And Responses
 
-Requests and responses can be built using messages that are returned from the `Sanford::Protocol::Connection` class:
+Request and response objects have helpers for sending and receiving data using a connection.
 
 ```ruby
-# on a server, read off requests, write a response
-message = connection.read
-request = Sanford::Protocol::Request.parse(message)
-# process the request
-response = Sanford::Protocol::Response.new(status, result)
-connection.write(response.to_message)
+# For a server...
+# use Request#parse to build an incoming request
+data_hash = server_connection.read
+incoming_request = Sanford::Protocol::Request.parse(data_hash)
+# use Response#to_hash to send a response
+outgoing_response = Sanford::Protocol::Response.new(status, result)
+server_connection.write(outgoing_response.to_hash)
 
-# on a client, write a request and then read off a resposne
-request = Sanford::Protocol::Request.new(name, version, params)
-connection.write(request.to_message)
-message = connection.read
-response = Sanford::Protocol::Response.parse(message)
+# For a client...
+# use Request#to_hash to send a request
+outgoing_request = Sanford::Protocol::Request.new(name, version, params)
+client_connection.write(outgoing_request.to_hash)
+# use Response#parse to build an incoming response
+data_hash = client_connection.read
+incoming_response = Sanford::Protocol::Response.parse(data_hash)
 ```
 
 ## Test Helpers
+
+A `FakeSocket` helper class and an associated `Test::Helpers` module are provided to help test receiving and sending Sanford::Protocol messages without using real sockets.
 
 ```ruby
 # fake a socket with some incoming binary
@@ -125,8 +133,6 @@ socket   = FakeSocket.with_request(*request_params)
 msg_data = Sanford::Protocol::Connection.new(socket).read
 request  = Sanford::Protocol::Request.parse(msg_data)
 ```
-
-A `FakeSocket` test helper class and an associated `Test::Helpers` module are provided to help test receiving and sending Sanford::Protocol messages.
 
 ## Contributing
 
