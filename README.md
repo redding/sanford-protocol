@@ -4,7 +4,7 @@ Ruby implementation of the Sanford communication protocol.
 
 ## The Protocol
 
-**Version**: 1
+**Version**: `1`
 
 Sanford communicates using binary encoded messages.  Sanford messages are two headers and a body:
 
@@ -61,14 +61,14 @@ Responses are encoded as BSON hashes when transmitted in messages.
 
 ### Status Codes
 
-This is the list of predefined status codes.
+This is the list of defined status codes.
 
 * `200` - `ok` - The request was successful.
 * `400` - `bad_request` - The request couldn't be read. This is usually because it was not formed correctly.
 * `404` - `not_found` - The server couldn't find something requested.
 * `500` - `error` - The server errored responding to the request.
 
-In addition to these, a service can return custom status codes, but they should use a number greater than or equal to 600 to avoid collisions with Sanford's defined status codes.
+In addition to these, a service can return custom status codes, but they should use a number greater than or equal to `600` to avoid collisions with Sanford's defined status codes.
 
 ## Usage
 

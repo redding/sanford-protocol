@@ -14,9 +14,10 @@ module Sanford::Protocol
     end
 
     # Message format (see sanford-protocal.rb):
-    # |------ 1B -------|------ 4B -------|-- <msg body size>B --|
-    # | (static header) | (packed header) | (BSON binary string) |
+    # |------ 1B -------|------ 4B -------|-- (msg body size)B --|
+    # | (packed header) | (packed header) | (BSON binary string) |
     # |   msg version   |  msg body size  |       msg body       |
+    # |-----------------|-----------------|----------------------|
 
     def read
       MsgVersion.new{ @socket.read msg_version.bytesize }.validate!
