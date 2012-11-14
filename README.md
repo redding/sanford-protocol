@@ -1,12 +1,12 @@
 # Sanford Protocol
 
-This gem is the ruby implementation of the Sanford communication protocol.
+Ruby implementation of the Sanford communication protocol.
 
 ## The Protocol
 
 **Version**: 1
 
-Sanford communicates using a binary encoded messages.  Sanford messages are two headers and a body in the format:
+Sanford communicates using binary encoded messages.  Sanford messages are two headers and a body:
 
 ```
 |------ 1B -------|------ 4B -------|---- (Body Size)B ----|
@@ -17,15 +17,15 @@ Sanford communicates using a binary encoded messages.  Sanford messages are two 
 
 ### Version
 
-The first header represents the protocol version in use.  It is 1 byte long and exists to ensure both the client and the server are using talking the same protocol.
+The first header represents the protocol version in use.  It is a 1 byte unsigned integer and exists to ensure both the client and the server are talking the same protocol.
 
 ### Body Size
 
-The second header represents the size of the message's body.  It is 4 bytes long and tells the receiver how many bytes to read to receive the body.
+The second header represents the size of the message's body.  It is a 4 byte unsigned integer and tells the receiver how many bytes to read to receive the body.
 
 ### Body
 
-The Body is the content of the message.  It is a [BSON](http://bsonspec.org/) encoded binary string that decodes to a ruby hash.
+The Body is the content of the message.  It is a [BSON](http://bsonspec.org/) encoded binary string that decodes to a ruby hash.  Since the size of the body is encoded as a 4 byte (32 bit) unsigned integer, there is a size limit for body data (`(2 ** 32) - 1` or `4,294,967,295` or `~4GB`).
 
 ## Request
 
@@ -38,9 +38,9 @@ A request is made up of 3 required parts: the version, the name, and the params.
 Requests are encoded as BSON hashes when transmitted in messages.
 
 ```ruby
-{ 'version':  'v1',
-  'name':     'some_service',
-  'params':   'something'
+{ 'version': 'v1',
+  'name':    'some_service',
+  'params':  'something'
 }
 ```
 
@@ -61,16 +61,18 @@ Responses are encoded as BSON hashes when transmitted in messages.
 
 ### Status Codes
 
+This is the list of predefined status codes.
+
 * `200` - `ok` - The request was successful.
-* `400` - `bad_request` - The request couldn't be read. This is usually because it was not formed correctly. This can mean a number of things, check the response message for details.
+* `400` - `bad_request` - The request couldn't be read. This is usually because it was not formed correctly.
 * `404` - `not_found` - The server couldn't find something requested.
 * `500` - `error` - The server errored responding to the request.
 
-This is the list of predefined status codes. In addition to these, a service can return custom status codes, but they should use a number greater than or equal to 600 to avoid collisions with Sanford's defined status codes.
+In addition to these, a service can return custom status codes, but they should use a number greater than or equal to 600 to avoid collisions with Sanford's defined status codes.
 
 ## Usage
 
-`Sanford::Protocol` defines helper methods for encoding and decoding messages.
+The `Sanford::Protocol` module defines helper methods for encoding and decoding messages.
 
 ```ruby
 # encode a message
