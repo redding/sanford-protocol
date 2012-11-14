@@ -20,10 +20,6 @@ module Sanford::Protocol
     end
 
     class Code < Struct.new(:number, :name)
-      class NoName
-        def self.upcase; nil; end
-      end
-
       NUMBERS = {
         'ok'          => 200,
         'bad_request' => 400,
@@ -38,6 +34,10 @@ module Sanford::Protocol
       end
 
       def to_s; "[#{[number, name].compact.join(', ')}]"; end
+
+      class NoName
+        def self.upcase; nil; end
+      end
     end
 
   end
