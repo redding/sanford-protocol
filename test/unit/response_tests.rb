@@ -48,20 +48,21 @@ class Sanford::Protocol::Response
       assert_equal 574, response.status.code
       assert_equal nil, response.status.message
     end
-    should "build a status with it's code set, given a name" do
-      Sanford::Protocol::ResponseStatus::CODES.each do |name, value|
-        response = Sanford::Protocol::Response.new(name)
 
-        assert_equal value, response.status.code
-        assert_equal nil, response.status.message
-      end
+    should "build a status with it's code set, given a name" do
+      response = Sanford::Protocol::Response.new('ok')
+
+      assert_equal 200, response.status.code
+      assert_equal nil, response.status.message
     end
+
     should "use a status object, if given one" do
       status = Sanford::Protocol::ResponseStatus.new(200, "OK")
       response = Sanford::Protocol::Response.new(status)
 
       assert_same status, response.status
     end
+
     should "build a status with a code and message set, when given both" do
       response = Sanford::Protocol::Response.new([ 348, "my message" ])
 

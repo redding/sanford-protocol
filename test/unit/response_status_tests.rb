@@ -10,30 +10,33 @@ class Sanford::Protocol::ResponseStatus
     end
     subject{ @status }
 
-    should have_instance_methods :code, :message, :name
+    should have_readers :code_obj, :message
+    should have_instance_methods :code, :name
 
-    should "return a code's name with #name, if it has one" do
-      named_status = Sanford::Protocol::ResponseStatus.new(200)
-      unamed_status = Sanford::Protocol::ResponseStatus.new(999)
+    should "know it's code name" do
+      named  = Sanford::Protocol::ResponseStatus.new(200)
+      unamed = Sanford::Protocol::ResponseStatus.new(999)
 
-      assert_equal "SUCCESS", named_status.name
-      assert_equal nil,       unamed_status.name
+      assert_equal "OK", named.name
+      assert_equal nil,  unamed.name
     end
 
-    should "use a named code's value when it's given when initializing" do
-      Sanford::Protocol::ResponseStatus::CODES.each do |name, value|
+    should "know it's code numbers" do
+      Code::NUMBERS.each do |name, value|
         status = Sanford::Protocol::ResponseStatus.new(name)
-
         assert_equal value, status.code
       end
+
+      unamed = Sanford::Protocol::ResponseStatus.new('unamed')
+      assert_equal 0, unamed.code
     end
 
-    should "return it's code and name with #to_s" do
-      named_status = Sanford::Protocol::ResponseStatus.new(200)
-      unamed_status = Sanford::Protocol::ResponseStatus.new(999)
+    should "return it's code number and code name with #to_s" do
+      named  = Sanford::Protocol::ResponseStatus.new(200)
+      unamed = Sanford::Protocol::ResponseStatus.new(999)
 
-      assert_equal "[#{named_status.code}, #{named_status.name}]", named_status.to_s
-      assert_equal "[#{unamed_status.code}]", unamed_status.to_s
+      assert_equal "[#{named.code}, #{named.name}]", named.to_s
+      assert_equal "[#{unamed.code}]", unamed.to_s
     end
 
   end
