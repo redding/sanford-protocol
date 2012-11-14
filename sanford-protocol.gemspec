@@ -6,8 +6,8 @@ require 'sanford-protocol/version'
 Gem::Specification.new do |gem|
   gem.name          = "sanford-protocol"
   gem.version       = Sanford::Protocol::GEM_VERSION
-  gem.authors       = ["Collin Redding"]
-  gem.email         = ["collin.redding@me.com"]
+  gem.authors       = ["Collin Redding", "Kelly Redding"]
+  gem.email         = ["collin.redding@me.com", "kelly@kellyredding.com"]
   gem.description   = "Ruby implementation of Sanford's communication protocol."
   gem.summary       = "Ruby implementation of Sanford's communication protocol."
   gem.homepage      = ""
