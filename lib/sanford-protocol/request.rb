@@ -17,6 +17,8 @@ module Sanford::Protocol
       }
     end
 
+    def to_s; "[#{version}] #{name}"; end
+
     def valid?
       if !version
         [ false, "The request doesn't contain a version." ]

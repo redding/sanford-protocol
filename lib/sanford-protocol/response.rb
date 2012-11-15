@@ -16,6 +16,9 @@ module Sanford::Protocol
       super(build_status(status), data)
     end
 
+    def code; status.code; end
+    def to_s; status.to_s; end
+
     def to_hash
       { 'status' => [ status.code, status.message ],
         'data'   => data
@@ -24,9 +27,7 @@ module Sanford::Protocol
 
     def inspect
       reference = '0x0%x' % (self.object_id << 1)
-      "#<#{self.class}:#{reference}"\
-      " @status=#{status.inspect}"\
-      " @data=#{data.inspect}>"
+      "#<#{self.class}:#{reference} @status=#{status} @data=#{data.inspect}>"
     end
 
     private
