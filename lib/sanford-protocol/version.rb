@@ -1,5 +1,5 @@
 module Sanford
   module Protocol
-    GEM_VERSION = "0.2.0"
+    GEM_VERSION = "0.3.0"
   end
 end
