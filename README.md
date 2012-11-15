@@ -46,16 +46,16 @@ Requests are encoded as BSON hashes when transmitted in messages.
 
 ## Response
 
-A response is made up of 2 parts: the status and the result.
+A response is made up of 2 parts: the status and the data.
 
 * **status** - (tuple, required) A code and message describing the result of the service call.
-* **result** - (object, optional) Result of calling the service. This can be any BSON serializable object.  Typically won't be set if the request is not successful.
+* **data** - (object, optional) Return value of the service call. This can be any BSON serializable object.  Typically won't be set if the request is not successful.
 
 Responses are encoded as BSON hashes when transmitted in messages.
 
 ```ruby
 { 'status': [ 200, 'The request was successful.' ]
-  'result': true
+  'data':   true
 }
 ```
 
@@ -104,7 +104,7 @@ Request and response objects have helpers for sending and receiving data using a
 data_hash = server_connection.read
 incoming_request = Sanford::Protocol::Request.parse(data_hash)
 # use Response#to_hash to send a response
-outgoing_response = Sanford::Protocol::Response.new(status, result)
+outgoing_response = Sanford::Protocol::Response.new(status, data)
 server_connection.write(outgoing_response.to_hash)
 
 # For a client...
