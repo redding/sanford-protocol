@@ -110,6 +110,18 @@ connection.write(outgoing_data)
 
 For incoming messages, it reads them off the socket, validate them, and return the decoded body data.  For outgoing messages, it encodes the message body from given data, adds the appropiate message headers, and writes the message to the socket.
 
+#### Timeout
+
+When reading data from a connection, you can optionally pass a timeout value.  If given, the connection will block and wait until data is ready to be read.  If a timeout occurs, the connection will raise `TimeoutError`.
+
+```ruby
+begin
+  connection.read(10)  # timeout after waiting on data for 10s
+rescue Sanford::Protocol::TimeoutError => err
+  puts "timeout - so sad :("
+end
+```
+
 ### Requests And Responses
 
 Request and response objects have helpers for sending and receiving data using a connection.

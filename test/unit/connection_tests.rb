@@ -24,4 +24,19 @@ class Sanford::Protocol::Connection
     end
   end
 
+  class TimeoutTests < BaseTests
+    desc "when timing out on a read"
+    setup do
+      IO.stubs(:select).returns(nil) # mock IO.select behavior when it times out
+    end
+    teardown do
+      IO.unstub(:select)
+    end
+
+    should "raise `TimeoutError` if given a timeout value" do
+      assert_raises(Sanford::Protocol::TimeoutError) { subject.read(1) }
+    end
+
+  end
+
 end
