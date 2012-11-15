@@ -10,28 +10,28 @@ class Sanford::Protocol::Response
     end
     subject{ @response }
 
-    should have_instance_methods :status, :result, :to_hash
+    should have_instance_methods :status, :data, :to_hash
     should have_class_methods :parse
 
     should "return an instance of a Sanford::Protocol::Response given a hash using #parse" do
       # using BSON messages are hashes
       hash = {
-        'status'  => [ 200, 'OK' ],
-        'result'  => 'yes'
+        'status' => [ 200, 'OK' ],
+        'data'   => 'yes'
       }
       request = Sanford::Protocol::Response.parse(hash)
 
       assert_instance_of Sanford::Protocol::Response, request
-      assert_equal hash['status'].first,   request.status.code
-      assert_equal hash['status'].last,    request.status.message
-      assert_equal hash['result'],         request.result
+      assert_equal hash['status'].first, request.status.code
+      assert_equal hash['status'].last,  request.status.message
+      assert_equal hash['data'],         request.data
     end
 
     should "return the request as a hash with #to_hash" do
       # using BSON messages are hashes
       expected = {
-        'status'  => [ 672, 'YAR!' ],
-        'result'  => { 'something' => true }
+        'status' => [ 672, 'YAR!' ],
+        'data'   => { 'something' => true }
       }
 
       assert_equal expected, subject.to_hash

@@ -10,7 +10,7 @@ class Sanford::Protocol::Request
     end
     subject{ @request }
 
-    should have_instance_methods :name, :version, :params, :to_hash, :valid?
+    should have_instance_methods :version, :name, :params, :to_hash, :valid?
     should have_class_methods :parse
 
     should "return an instance of a Sanford::Protocol::Request given a hash using #parse" do
