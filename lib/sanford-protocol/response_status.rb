@@ -9,14 +9,14 @@ module Sanford::Protocol
     end
 
     def code; code_obj.number; end
+    alias_method :to_i, :code
+
     def name; code_obj.name;   end
     def to_s; code_obj.to_s;   end
 
     def inspect
       reference = '0x0%x' % (self.object_id << 1)
-      "#<#{self.class}:#{reference}"\
-      " @code=#{code_obj}"\
-      " @message=#{message.inspect}>"
+      "#<#{self.class}:#{reference} @code=#{code_obj} @message=#{message.inspect}>"
     end
 
     class Code < Struct.new(:number, :name)

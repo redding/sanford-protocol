@@ -13,6 +13,10 @@ class Sanford::Protocol::Request
     should have_instance_methods :version, :name, :params, :to_hash, :valid?
     should have_class_methods :parse
 
+    should "return it's version and name with #to_s" do
+      assert_equal "[#{subject.version}] #{subject.name}", subject.to_s
+    end
+
     should "return an instance of a Sanford::Protocol::Request given a hash using #parse" do
       # using BSON messages are hashes
       hash = {

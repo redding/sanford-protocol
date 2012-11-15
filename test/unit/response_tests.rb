@@ -10,8 +10,16 @@ class Sanford::Protocol::Response
     end
     subject{ @response }
 
-    should have_instance_methods :status, :data, :to_hash
+    should have_instance_methods :status, :code, :data, :to_hash, :to_s
     should have_class_methods :parse
+
+    should "return its status#code with #code" do
+      assert_equal subject.status.code, subject.code
+    end
+
+    should "return its status#to_s with #to_s" do
+      assert_equal subject.status.to_s, subject.to_s
+    end
 
     should "return an instance of a Sanford::Protocol::Response given a hash using #parse" do
       # using BSON messages are hashes
@@ -36,6 +44,7 @@ class Sanford::Protocol::Response
 
       assert_equal expected, subject.to_hash
     end
+
   end
 
   # Somewhat of a system test, want to make sure if Response is passed some

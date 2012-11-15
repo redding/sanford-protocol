@@ -11,7 +11,7 @@ class Sanford::Protocol::ResponseStatus
     subject{ @status }
 
     should have_readers :code_obj, :message
-    should have_instance_methods :code, :name
+    should have_instance_methods :code, :name, :to_i
 
     should "know it's code name" do
       named  = Sanford::Protocol::ResponseStatus.new(200)
@@ -21,7 +21,7 @@ class Sanford::Protocol::ResponseStatus
       assert_equal nil,  unamed.name
     end
 
-    should "know it's code numbers" do
+    should "know it's code number" do
       Code::NUMBERS.each do |name, value|
         status = Sanford::Protocol::ResponseStatus.new(name)
         assert_equal value, status.code
@@ -29,6 +29,10 @@ class Sanford::Protocol::ResponseStatus
 
       unamed = Sanford::Protocol::ResponseStatus.new('unamed')
       assert_equal 0, unamed.code
+    end
+
+    should "return it's code number with #to_i" do
+      assert_equal subject.code, subject.to_i
     end
 
     should "return it's code number and code name with #to_s" do

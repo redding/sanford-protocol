@@ -42,6 +42,12 @@ Requests are encoded as BSON hashes when transmitted in messages.
   'name':    'some_service',
   'params':  'something'
 }
+
+request = Sanford::Protocol::Request.parse(a_bson_request_hash)
+request.version  #=> "v1"
+request.name     #=> "some_service"
+request.params   #=> "something"
+request.to_s     #=> "[v1] some_service"
 ```
 
 ## Response
@@ -57,6 +63,16 @@ Responses are encoded as BSON hashes when transmitted in messages.
 { 'status': [ 200, 'The request was successful.' ]
   'data':   true
 }
+
+response = Sanford::Protocol::Response.parse(a_bson_response_hash)
+response.status.code    #=> 200
+response.status.to_i    #=> 200
+response.status.name    #=> "OK"
+response.status.message #=> "The request was successful."
+response.status.to_s    #=> "[200, OK]"
+response.code           #=> 200
+response.to_s           #=> "[200, OK]"
+response.data           #=> true
 ```
 
 ### Status Codes
