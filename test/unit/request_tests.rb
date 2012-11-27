@@ -6,7 +6,7 @@ class Sanford::Protocol::Request
   class BaseTests < Assert::Context
     desc "Sanford::Protocol::Request"
     setup do
-      @request = Sanford::Protocol::Request.new('v1', 'some_service', [ true ])
+      @request = Sanford::Protocol::Request.new('v1', 'some_service', { 'key' => 'value' })
     end
     subject{ @request }
 
@@ -22,7 +22,7 @@ class Sanford::Protocol::Request
       hash = {
         'name'    => 'service_name',
         'version' => 'service_version',
-        'params'  => 'service_params'
+        'params'  => { 'service_params' => 'yes' }
       }
       request = Sanford::Protocol::Request.parse(hash)
 
@@ -37,7 +37,7 @@ class Sanford::Protocol::Request
       expected = {
         'version' => 'v1',
         'name'    => 'some_service',
-        'params'  => [ true ]
+        'params'  => { 'key' => 'value' }
       }
 
       assert_equal expected, subject.to_hash
@@ -48,7 +48,7 @@ class Sanford::Protocol::Request
     desc "valid?"
 
     should "return true and no message with a valid request" do
-      request = Sanford::Protocol::Request.new('name', 'v1', {})
+      request = Sanford::Protocol::Request.new('v1', 'name', {})
       is_valid, message = request.valid?
 
       assert_equal true, is_valid
@@ -69,6 +69,14 @@ class Sanford::Protocol::Request
 
       assert_equal false, is_valid
       assert_equal "The request doesn't contain a version.", message
+    end
+
+    should "return false and a message when the params are not a Hash" do
+      request = Sanford::Protocol::Request.new('v1', 'name', true)
+      is_valid, message = request.valid?
+
+      assert_equal false, is_valid
+      assert_equal "The request's params are not a valid BSON document.", message
     end
   end
 

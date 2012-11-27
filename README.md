@@ -33,20 +33,20 @@ A request is made up of 3 required parts: the version, the name, and the params.
 
 * **version** - (string) version of the requested API.
 * **name**    - (string) name of the requested API service.
-* **params**  - (object) data for the service call - can be any BSON serializable object.
+* **params**  - (document) data for the service call - must be a BSON document (ruby Hash, python dict, Javascript Object).
 
 Requests are encoded as BSON hashes when transmitted in messages.
 
 ```ruby
-{ 'version': 'v1',
-  'name':    'some_service',
-  'params':  'something'
+{ 'version' => 'v1',
+  'name'    => 'some_service',
+  'params'  => { 'key' => 'value' }
 }
 
 request = Sanford::Protocol::Request.parse(a_bson_request_hash)
 request.version  #=> "v1"
 request.name     #=> "some_service"
-request.params   #=> "something"
+request.params   #=> { 'key' => 'value' }
 request.to_s     #=> "[v1] some_service"
 ```
 
@@ -60,8 +60,8 @@ A response is made up of 2 parts: the status and the data.
 Responses are encoded as BSON hashes when transmitted in messages.
 
 ```ruby
-{ 'status': [ 200, 'The request was successful.' ]
-  'data':   true
+{ 'status'  => [ 200, 'The request was successful.' ]
+  'data'    => true
 }
 
 response = Sanford::Protocol::Response.parse(a_bson_response_hash)
@@ -108,7 +108,7 @@ incoming_data = connection.read
 connection.write(outgoing_data)
 ```
 
-For incoming messages, it reads them off the socket, validate them, and return the decoded body data.  For outgoing messages, it encodes the message body from given data, adds the appropiate message headers, and writes the message to the socket.
+For incoming messages, it reads them off the socket, validates them, and returns the decoded body data.  For outgoing messages, it encodes the message body from given data, adds the appropiate message headers, and writes the message to the socket.
 
 #### Timeout
 

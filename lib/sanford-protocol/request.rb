@@ -24,6 +24,8 @@ module Sanford::Protocol
         [ false, "The request doesn't contain a version." ]
       elsif !name
         [ false, "The request doesn't contain a name." ]
+      elsif !params.kind_of?(Hash)
+        [ false, "The request's params are not a valid BSON document." ]
       else
         [ true ]
       end
