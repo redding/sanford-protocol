@@ -10,7 +10,7 @@ class Sanford::Protocol::Request
     end
     subject{ @request }
 
-    should have_instance_methods :version, :name, :params, :to_hash, :valid?
+    should have_instance_methods :version, :name, :params, :to_hash
     should have_class_methods :parse
 
     should "return it's version and name with #to_s" do
@@ -45,38 +45,29 @@ class Sanford::Protocol::Request
   end
 
   class ValidTests < BaseTests
-    desc "valid?"
 
-    should "return true and no message with a valid request" do
-      request = Sanford::Protocol::Request.new('v1', 'name', {})
-      is_valid, message = request.valid?
-
-      assert_equal true, is_valid
-      assert_equal nil, message
+    should "not raise an exception with valid request args" do
+      assert_nothing_raised do
+        Sanford::Protocol::Request.new('v1', 'name', {})
+      end
     end
 
-    should "return false and a message when there isn't a name" do
-      request = Sanford::Protocol::Request.new('v1', nil, {})
-      is_valid, message = request.valid?
-
-      assert_equal false, is_valid
-      assert_equal "The request doesn't contain a name.", message
+    should "raise an exception when there isn't a name arg" do
+      assert_raises(Sanford::Protocol::BadRequestError) do
+        Sanford::Protocol::Request.new('v1', nil, {})
+      end
     end
 
     should "return false and a message when there isn't a version" do
-      request = Sanford::Protocol::Request.new(nil, 'name', {})
-      is_valid, message = request.valid?
-
-      assert_equal false, is_valid
-      assert_equal "The request doesn't contain a version.", message
+      assert_raises(Sanford::Protocol::BadRequestError) do
+        Sanford::Protocol::Request.new(nil, 'name', {})
+      end
     end
 
     should "return false and a message when the params are not a Hash" do
-      request = Sanford::Protocol::Request.new('v1', 'name', true)
-      is_valid, message = request.valid?
-
-      assert_equal false, is_valid
-      assert_equal "The request's params are not a valid BSON document.", message
+      assert_raises(Sanford::Protocol::BadRequestError) do
+        Sanford::Protocol::Request.new('v1', 'name', true)
+      end
     end
   end
 

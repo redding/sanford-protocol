@@ -4,10 +4,19 @@
 
 module Sanford::Protocol
 
-  class Request < Struct.new(:version, :name, :params)
+  BadRequestError = Class.new(RuntimeError)
+
+  class Request
 
     def self.parse(body)
       self.new(body['version'], body['name'], body['params'])
+    end
+
+    attr_reader :version, :name, :params
+
+    def initialize(version, name, params)
+      self.validate!(version, name, params)
+      @version, @name, @params = version, name, params
     end
 
     def to_hash
@@ -19,24 +28,25 @@ module Sanford::Protocol
 
     def to_s; "[#{version}] #{name}"; end
 
-    def valid?
-      if !version
-        [ false, "The request doesn't contain a version." ]
-      elsif !name
-        [ false, "The request doesn't contain a name." ]
-      elsif !params.kind_of?(Hash)
-        [ false, "The request's params are not a valid BSON document." ]
-      else
-        [ true ]
-      end
-    end
-
     def inspect
       reference = '0x0%x' % (self.object_id << 1)
       "#<#{self.class}:#{reference}"\
       " @version=#{version.inspect}"\
       " @name=#{name.inspect}"\
       " @params=#{params.inspect}>"
+    end
+
+    protected
+
+    def validate!(version, name, params)
+      problem = if !version
+        "The request doesn't contain a version."
+      elsif !name
+        "The request doesn't contain a name."
+      elsif !params.kind_of?(Hash)
+        "The request's params are not a valid BSON document."
+      end
+      raise(BadRequestError, problem) if problem
     end
 
   end
