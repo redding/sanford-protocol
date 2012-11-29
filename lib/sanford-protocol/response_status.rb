@@ -24,6 +24,7 @@ module Sanford::Protocol
         'ok'          => 200,
         'bad_request' => 400,
         'not_found'   => 404,
+        'timeout'     => 408,
         'error'       => 500
       }.freeze
 
