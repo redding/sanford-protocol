@@ -16,7 +16,7 @@ module Sanford::Protocol
 
     def initialize(version, name, params)
       self.validate!(version, name, params)
-      @version, @name, @params = version, name, params
+      @version, @name, @params = version, name, self.stringify(params)
     end
 
     def to_hash
@@ -47,6 +47,17 @@ module Sanford::Protocol
         "The request's params are not a valid BSON document."
       end
       raise(BadRequestError, problem) if problem
+    end
+
+    def stringify(object)
+      case(object)
+      when Hash
+        object.inject({}){|h, (k, v)| h.merge({ k.to_s => self.stringify(v) }) }
+      when Array
+        object.map{|item| self.stringify(item) }
+      else
+        object
+      end
     end
 
   end

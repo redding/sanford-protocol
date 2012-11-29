@@ -17,6 +17,15 @@ class Sanford::Protocol::Request
       assert_equal "[#{subject.version}] #{subject.name}", subject.to_s
     end
 
+    should "stringify params keys" do
+      request = Sanford::Protocol::Request.new('v1', 'service', {
+        1       => 1,
+        :symbol => :symbol
+      })
+      expected = { "1" => 1, "symbol" => :symbol }
+      assert_equal expected, request.params
+    end
+
     should "return an instance of a Sanford::Protocol::Request given a hash using #parse" do
       # using BSON messages are hashes
       hash = {
