@@ -47,5 +47,13 @@ module Sanford::Protocol::Test
       @out << bytes
     end
 
+    def close
+      @closed = true
+    end
+
+    def closed?
+      !!@closed
+    end
+
   end
 end

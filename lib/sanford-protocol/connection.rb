@@ -33,6 +33,10 @@ module Sanford::Protocol
       @socket.write(msg_version, size, body)
     end
 
+    def close
+      @socket.close
+    end
+
     private
 
     def wait_for_data(timeout)
@@ -58,6 +62,10 @@ module Sanford::Protocol
 
     def write(*binary_strings)
       tcp_socket.send(binary_strings.join, 0)
+    end
+
+    def close
+      tcp_socket.close rescue false
     end
   end
 

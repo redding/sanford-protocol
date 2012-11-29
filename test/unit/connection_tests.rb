@@ -12,7 +12,7 @@ class Sanford::Protocol::Connection
     end
     subject{ @connection }
 
-    should have_instance_methods :read, :write
+    should have_instance_methods :read, :write, :close
 
     should "read messages off the socket with #read" do
       assert_equal @data, subject.read
@@ -21,6 +21,11 @@ class Sanford::Protocol::Connection
     should "write messages to the socket with #write" do
       subject.write(@data)
       assert_equal @msg, @socket.out
+    end
+
+    should "close the socket with #close" do
+      subject.close
+      assert @socket.closed?
     end
   end
 
