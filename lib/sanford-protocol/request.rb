@@ -16,13 +16,13 @@ module Sanford::Protocol
 
     def initialize(version, name, params)
       self.validate!(version, name, params)
-      @version, @name, @params = version, name, self.stringify(params)
+      @version, @name, @params = version, name, params
     end
 
     def to_hash
       { 'version' => version,
         'name'    => name,
-        'params'  => params
+        'params'  => self.stringify(params)
       }
     end
 

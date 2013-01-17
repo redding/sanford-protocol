@@ -11,7 +11,6 @@ module Sanford::Protocol
     attr_reader :value
 
     def initialize(called_from=nil, &get_value)
-      @called_from = called_from || caller
 
       # By default, any exceptions from getting the value are "hidden" behind a
       # more general `BadMessageError`. In non-debug scenarios this is ideal and
@@ -21,6 +20,7 @@ module Sanford::Protocol
       begin
         @value = get_value.call
       rescue Exception => err
+        @called_from = called_from || caller
         ENV['SANFORD_PROTOCOL_DEBUG'] ? raise(err) : self.error!(self.get_value_error)
       end
     end
