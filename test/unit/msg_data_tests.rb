@@ -75,7 +75,7 @@ class Sanford::Protocol::MsgData
         raises("simulated socket read error!")
     end
     teardown do
-      Sanford::Protocol.unstub(:read)
+      @socket.unstub(:read)
     end
 
     should "raise a BadMessageError with a relevant message" do

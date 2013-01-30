@@ -19,11 +19,10 @@ module Sanford::Protocol
     # |   msg version   |  msg body size  |       msg body       |
     # |-----------------|-----------------|----------------------|
 
-    # Throws an EndOfStreamError when the socket is closed on the other end.
-    # Without this, `recvfrom` will return an empty string, which causes
-    # errors when it tries to parse the request. The end-of-stream behavior is
-    # typical for a keep-alive check, it will try to bind and then immediately
-    # close the connection. Explanation from ruby's doc:
+    # Throws an EndOfStreamError when the socket is closed on the remote end.
+    # To detect this, a single byte is read. If the result is empty (`""`)
+    # then we assume the connection has been closed. Explanation from ruby's
+    # docs:
     #
     #   "When recvfrom(2) returns 0, #recvfrom_nonblock returns an empty
     #   string as data. The meaning depends on the socket: EOF on TCP,
@@ -33,8 +32,8 @@ module Sanford::Protocol
     #
     def read(timeout=nil)
       wait_for_data(timeout) if timeout
-      raise EndOfStreamError.new if @socket.eof?
-      MsgVersion.new{ @socket.read msg_version.bytesize }.validate!
+      version = MsgVersion.new{ @socket.read msg_version.bytesize }
+      version.value.size != 0 ? version.validate! : raise(EndOfStreamError.new)
       size = MsgSize.new{ @socket.decode msg_size, msg_size.bytes }.validate!.value
       return MsgBody.new{ @socket.decode msg_body, size           }.validate!.value
     end
