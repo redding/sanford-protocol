@@ -29,17 +29,50 @@ class Sanford::Protocol::Connection
     end
   end
 
-  class TimeoutTests < BaseTests
-    desc "when timing out on a read"
-    setup do
-      IO.stubs(:select).returns(nil) # mock IO.select behavior when it times out
-    end
-    teardown do
-      IO.unstub(:select)
+  class RealConnectionTests < BaseTests
+
+    def start_server(options, &block)
+      begin
+        # this `fork` is a separate process, so it runs parallel to the code
+        # after it's block
+        pid = fork do
+          tcp_server = TCPServer.open 'localhost', 12000
+          trap("TERM"){ tcp_server.close }
+          socket = tcp_server.accept # blocks here, waits for `block` to connect
+          options[:serve].call(socket) if options[:serve]
+        end
+        sleep 0.2 # give the server time to boot
+        yield
+      ensure
+        if pid
+          Process.kill("TERM", pid)
+          Process.wait(pid)
+        end
+      end
     end
 
+  end
+
+  class TimeoutTests < RealConnectionTests
+    desc "when timing out on a read"
+
     should "raise `TimeoutError` if given a timeout value" do
-      assert_raises(Sanford::Protocol::TimeoutError) { subject.read(1) }
+      self.start_server(:serve => proc{ sleep 0.2 }) do
+        connection = Sanford::Protocol::Connection.new(TCPSocket.new('localhost', 12000))
+        assert_raises(Sanford::Protocol::TimeoutError) { connection.read(0.1) }
+      end
+    end
+
+  end
+
+  class EOFTests < RealConnectionTests
+    desc "when the TCP socket's stream is closed immediately"
+
+    should "raise `EndOfStreamError`" do
+      self.start_server(:serve => proc{|socket| socket.close }) do
+        connection = Sanford::Protocol::Connection.new(TCPSocket.new('localhost', 12000))
+        assert_raises(Sanford::Protocol::EndOfStreamError) { connection.read(0.1) }
+      end
     end
 
   end
