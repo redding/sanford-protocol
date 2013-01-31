@@ -40,7 +40,7 @@ module Sanford::Protocol::Test
     # Socket methods -- requied by Sanford::Protocol
 
     def recvfrom(number_of_bytes)
-      [ @in.read(number_of_bytes.to_i) ]
+      [ @in.read(number_of_bytes.to_i) || "" ]
     end
 
     def send(bytes, flag)
