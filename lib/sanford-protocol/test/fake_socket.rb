@@ -55,13 +55,5 @@ module Sanford::Protocol::Test
       !!@closed
     end
 
-    def eof
-      @eof = true
-    end
-
-    def eof?
-      !!@eof
-    end
-
   end
 end

@@ -41,8 +41,7 @@ class Sanford::Protocol::Test::FakeSocket
     should "pull `in` data using #recv" do
       recv_data = subject.recv(@in_data.bytesize)
 
-      assert_kind_of ::Array, recv_data
-      assert_equal @in_data, recv_data.first
+      assert_equal @in_data, recv_data
     end
 
     should "reset its `in` data using #reset" do
