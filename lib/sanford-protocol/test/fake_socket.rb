@@ -39,8 +39,8 @@ module Sanford::Protocol::Test
 
     # Socket methods -- requied by Sanford::Protocol
 
-    def recvfrom(number_of_bytes)
-      [ @in.read(number_of_bytes.to_i) || "" ]
+    def recv(number_of_bytes, flags = nil)
+      @in.read(number_of_bytes.to_i) || ""
     end
 
     def send(bytes, flag)

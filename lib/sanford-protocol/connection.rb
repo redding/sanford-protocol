@@ -69,7 +69,7 @@ module Sanford::Protocol
     end
 
     def read(number_of_bytes)
-      tcp_socket.recvfrom(number_of_bytes).first
+      tcp_socket.recv(number_of_bytes)
     end
 
     def write(*binary_strings)
