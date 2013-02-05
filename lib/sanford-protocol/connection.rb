@@ -1,4 +1,5 @@
 require 'sanford-protocol/msg_data'
+require 'socket'
 
 module Sanford::Protocol
 
@@ -19,21 +20,9 @@ module Sanford::Protocol
     # |   msg version   |  msg body size  |       msg body       |
     # |-----------------|-----------------|----------------------|
 
-    # Throws an EndOfStreamError when the socket is closed on the remote end.
-    # To detect this, a single byte is read. If the result is empty (`""`)
-    # then we assume the connection has been closed. Explanation from ruby's
-    # docs:
-    #
-    #   "When recvfrom(2) returns 0, #recvfrom_nonblock returns an empty
-    #   string as data. The meaning depends on the socket: EOF on TCP,
-    #   empty packet on UDP, etc."
-    #
-    # http://ruby-doc.org/stdlib-1.8.7/libdoc/socket/rdoc/Socket.html#method-i-recvfrom_nonblock
-    #
     def read(timeout=nil)
       wait_for_data(timeout) if timeout
-      version = MsgVersion.new{ @socket.read msg_version.bytesize }
-      version.value.size != 0 ? version.validate! : raise(EndOfStreamError.new)
+      MsgVersion.new{ @socket.read msg_version.bytesize }.validate!
       size = MsgSize.new{ @socket.decode msg_size, msg_size.bytes }.validate!.value
       return MsgBody.new{ @socket.decode msg_body, size           }.validate!.value
     end
@@ -43,6 +32,11 @@ module Sanford::Protocol
       size = @socket.encode msg_size, body.bytesize
 
       @socket.write(msg_version, size, body)
+    end
+
+    def peek(timeout=nil)
+      wait_for_data(timeout) if timeout
+      @socket.peek
     end
 
     def close
@@ -76,24 +70,18 @@ module Sanford::Protocol
       tcp_socket.send(binary_strings.join, 0)
     end
 
-    def close
-      tcp_socket.close rescue false
+    def peek(number_of_bytes = 1)
+      tcp_socket.recv(number_of_bytes, ::Socket::MSG_PEEK)
     end
 
-    def eof?
-      tcp_socket.eof?
+    def close
+      tcp_socket.close rescue false
     end
   end
 
   class TimeoutError < RuntimeError
     def initialize(timeout)
       super "Timed out waiting for data to read (#{timeout}s)."
-    end
-  end
-
-  class EndOfStreamError < RuntimeError
-    def initialize
-      super "TCP socket closed for reading."
     end
   end
 

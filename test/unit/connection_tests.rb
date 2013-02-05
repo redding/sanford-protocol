@@ -12,7 +12,7 @@ class Sanford::Protocol::Connection
     end
     subject{ @connection }
 
-    should have_instance_methods :read, :write, :close
+    should have_instance_methods :read, :write, :close, :peek
 
     should "read messages off the socket with #read" do
       assert_equal @data, subject.read
@@ -27,6 +27,11 @@ class Sanford::Protocol::Connection
       subject.close
       assert @socket.closed?
     end
+
+    should "look at the first byte of data on the socket with #peek" do
+      assert_equal @socket.in[0, 1], subject.peek
+    end
+
   end
 
   class RealConnectionTests < BaseTests
@@ -60,18 +65,6 @@ class Sanford::Protocol::Connection
       self.start_server(:serve => proc{ sleep 0.2 }) do
         connection = Sanford::Protocol::Connection.new(TCPSocket.new('localhost', 12000))
         assert_raises(Sanford::Protocol::TimeoutError) { connection.read(0.1) }
-      end
-    end
-
-  end
-
-  class EOFTests < RealConnectionTests
-    desc "when the TCP socket's stream is closed immediately"
-
-    should "raise `EndOfStreamError`" do
-      self.start_server(:serve => proc{|socket| socket.close }) do
-        connection = Sanford::Protocol::Connection.new(TCPSocket.new('localhost', 12000))
-        assert_raises(Sanford::Protocol::EndOfStreamError) { connection.read(0.1) }
       end
     end
 
