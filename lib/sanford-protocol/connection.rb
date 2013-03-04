@@ -63,7 +63,7 @@ module Sanford::Protocol
     end
 
     def read(number_of_bytes)
-      tcp_socket.recv(number_of_bytes)
+      recv(number_of_bytes)
     end
 
     def write(*binary_strings)
@@ -71,12 +71,24 @@ module Sanford::Protocol
     end
 
     def peek(number_of_bytes = 1)
-      tcp_socket.recv(number_of_bytes, ::Socket::MSG_PEEK)
+      recv(number_of_bytes, ::Socket::MSG_PEEK)
     end
 
     def close
       tcp_socket.close rescue false
     end
+
+    protected
+
+    def recv(number_of_bytes, *flags)
+      value = ""
+      while value.bytesize < number_of_bytes
+        data = tcp_socket.recv(number_of_bytes - value.bytesize, *flags)
+        !data.empty? ? value += data : break
+      end
+      value
+    end
+
   end
 
   class TimeoutError < RuntimeError
