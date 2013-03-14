@@ -55,5 +55,13 @@ module Sanford::Protocol::Test
       !!@closed
     end
 
+    def close_write
+      @write_stream_closed = true
+    end
+
+    def write_stream_closed?
+      !!@write_stream_closed
+    end
+
   end
 end

@@ -43,6 +43,10 @@ module Sanford::Protocol
       @socket.close
     end
 
+    def close_write
+      @socket.close_write
+    end
+
     private
 
     def wait_for_data(timeout)
@@ -76,6 +80,10 @@ module Sanford::Protocol
 
     def close
       tcp_socket.close rescue false
+    end
+
+    def close_write
+      tcp_socket.close_write rescue false
     end
 
     protected
