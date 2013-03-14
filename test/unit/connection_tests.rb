@@ -12,7 +12,7 @@ class Sanford::Protocol::Connection
     end
     subject{ @connection }
 
-    should have_instance_methods :read, :write, :close, :peek
+    should have_instance_methods :read, :write, :close, :peek, :close_write
 
     should "read messages off the socket with #read" do
       assert_equal @data, subject.read
@@ -30,6 +30,11 @@ class Sanford::Protocol::Connection
 
     should "look at the first byte of data on the socket with #peek" do
       assert_equal @socket.in[0, 1], subject.peek
+    end
+
+    should "close the write stream of the socket with #close_write" do
+      subject.close_write
+      assert @socket.write_stream_closed?
     end
 
   end
