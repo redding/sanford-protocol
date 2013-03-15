@@ -1,6 +1,7 @@
-require 'sanford-protocol/msg_data'
 require 'socket'
+require 'sanford-protocol/msg_data'
 
+module Sanford; end
 module Sanford::Protocol
 
   # Sanford Protocol's connection class wraps a socket and provides a `read` and

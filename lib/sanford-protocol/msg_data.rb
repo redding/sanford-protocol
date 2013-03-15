@@ -1,3 +1,4 @@
+module Sanford; end
 module Sanford::Protocol
 
   class BadMessageError < RuntimeError

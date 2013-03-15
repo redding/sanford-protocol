@@ -1,5 +1,4 @@
-module Sanford; end
-
+require 'sanford-protocol/version'
 require 'sanford-protocol/connection'
 require 'sanford-protocol/request'
 require 'sanford-protocol/response'

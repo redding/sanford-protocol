@@ -1,6 +1,6 @@
 # Sanford Protocol
 
-Ruby implementation of the Sanford communication protocol.
+Ruby implementation of Sanford TCP communication protocol.
 
 ## The Protocol
 
