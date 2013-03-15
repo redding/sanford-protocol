@@ -2,6 +2,7 @@
 # a defined structure for it. A request requires a message body to contain a
 # version, name and params.
 
+module Sanford; end
 module Sanford::Protocol
 
   BadRequestError = Class.new(RuntimeError)

@@ -1,9 +1,9 @@
+require 'sanford-protocol'
+require 'sanford-protocol/request'
+
 # The FakeSocket class can be used to work with Sanford Protocol in a test
 # environment. Instead of passing a real socket, pass an instance of this class.
 # It mimics the socket API that sanford is concerned with.
-
-require 'sanford-protocol'
-require 'sanford-protocol/request'
 
 module Sanford::Protocol::Test
   class FakeSocket

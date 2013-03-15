@@ -4,6 +4,7 @@ require 'sanford-protocol/response_status'
 # a defined structure for it. A response requires a message body to contain a
 # status and some data.
 
+module Sanford; end
 module Sanford::Protocol
 
   class Response < Struct.new(:status, :data)
