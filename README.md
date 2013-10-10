@@ -4,7 +4,7 @@ Ruby implementation of Sanford TCP communication protocol.
 
 ## The Protocol
 
-**Version**: `1`
+**Version**: `2`
 
 Sanford communicates using binary encoded messages.  Sanford messages are two headers and a body:
 
@@ -29,25 +29,22 @@ The Body is the content of the message.  It is a [BSON](http://bsonspec.org/) en
 
 ## Request
 
-A request is made up of 3 required parts: the version, the name, and the params.
+A request is made up of 2 required parts: the name, and the params.
 
-* **version** - (string) version of the requested API.
-* **name**    - (string) name of the requested API service.
-* **params**  - (document) data for the service call - must be a BSON document (ruby Hash, python dict, Javascript Object).
+* **name**   - (string) name of the requested API service.
+* **params** - (document) data for the service call - must be a BSON document (ruby Hash, python dict, Javascript Object).
 
 Requests are encoded as BSON hashes when transmitted in messages.
 
 ```ruby
-{ 'version' => 'v1',
-  'name'    => 'some_service',
-  'params'  => { 'key' => 'value' }
+{ 'name'   => 'some_service',
+  'params' => { 'key' => 'value' }
 }
 
 request = Sanford::Protocol::Request.parse(a_bson_request_hash)
-request.version  #=> "v1"
 request.name     #=> "some_service"
 request.params   #=> { 'key' => 'value' }
-request.to_s     #=> "[v1] some_service"
+request.to_s     #=> "some_service"
 ```
 
 ## Response
@@ -138,7 +135,7 @@ server_connection.write(outgoing_response.to_hash)
 
 # For a client...
 # use Request#to_hash to send a request
-outgoing_request = Sanford::Protocol::Request.new(name, version, params)
+outgoing_request = Sanford::Protocol::Request.new(name, params)
 client_connection.write(outgoing_request.to_hash)
 # use Response#parse to build an incoming response
 data_hash = client_connection.read

@@ -25,7 +25,7 @@ class Assert::Context
   end
 
   def setup_some_request_data
-    @request_params = ['1', 'a_service', {:some => 'data'}]
+    @request_params = ['a_service', {:some => 'data'}]
     @request = Sanford::Protocol::Request.new(*@request_params)
     setup_some_msg_data(@request.to_hash)
   end

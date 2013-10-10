@@ -14,7 +14,7 @@ module Sanford
     # README needs to be updated to display the current version and needs to
     # describe everything in this file.
 
-    VERSION = 1
+    VERSION = 2
 
     # The message version is the 1B encoding of the `VERSION` above. It is
     # encoded using Array#pack 'C' (8-bit unsigned integer).   The max value it
