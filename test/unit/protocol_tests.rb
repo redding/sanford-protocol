@@ -13,7 +13,7 @@ module Sanford::Protocol
     should have_instance_methods :msg_version, :msg_size, :msg_body
 
     should "define the protocol version" do
-      assert_equal 1, subject::VERSION
+      assert_equal 2, subject::VERSION
     end
 
     should "encode the protocol version to a 1B binary string" do
