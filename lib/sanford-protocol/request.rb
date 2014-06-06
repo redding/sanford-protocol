@@ -17,7 +17,7 @@ module Sanford::Protocol
 
     def initialize(name, params)
       self.validate!(name, params)
-      @name, @params = name, params
+      @name, @params = name.to_s, params
     end
 
     def to_hash
@@ -40,7 +40,7 @@ module Sanford::Protocol
     def validate!(name, params)
       problem = if !name
         "The request doesn't contain a name."
-      elsif !params.kind_of?(Hash)
+      elsif !params.kind_of?(::Hash)
         "The request's params are not a valid BSON document."
       end
       raise(BadRequestError, problem) if problem
