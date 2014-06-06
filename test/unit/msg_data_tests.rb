@@ -1,6 +1,7 @@
 require 'assert'
 require 'sanford-protocol/msg_data'
-require 'sanford-protocol'
+
+require 'sanford-protocol/connection'
 
 class Sanford::Protocol::MsgData
 

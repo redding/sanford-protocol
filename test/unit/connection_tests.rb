@@ -3,7 +3,7 @@ require 'sanford-protocol/connection'
 
 class Sanford::Protocol::Connection
 
-  class BaseTests < Assert::Context
+  class UnitTests < Assert::Context
     desc "Sanford::Protocol::Connection"
     setup do
       setup_some_msg_data
@@ -39,7 +39,7 @@ class Sanford::Protocol::Connection
 
   end
 
-  class RealConnectionTests < BaseTests
+  class RealConnectionTests < UnitTests
 
     def start_server(options, &block)
       begin

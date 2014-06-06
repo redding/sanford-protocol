@@ -1,11 +1,13 @@
 require 'assert'
-require 'sanford-protocol/test/helpers'
+require 'sanford-protocol/test_helpers'
 
-module Sanford::Protocol::Test::Helpers
+require 'sanford-protocol/response'
 
-  class BaseTests < Assert::Context
-    desc "the test helpers"
-    subject { Sanford::Protocol::Test::Helpers }
+module Sanford::Protocol::TestHelpers
+
+  class UnitTests < Assert::Context
+    desc "Sanford::Protocol::TestHelpers"
+    subject { Sanford::Protocol::TestHelpers }
 
     should have_imeths :fake_socket_with_request, :fake_socket_with_msg_body
     should have_imeths :fake_socket_with_encoded_msg_body, :fake_socket_with

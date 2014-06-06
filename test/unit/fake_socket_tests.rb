@@ -1,11 +1,12 @@
 require 'assert'
-require 'sanford-protocol/test/fake_socket'
+require 'sanford-protocol/fake_socket'
+
 require 'sanford-protocol/request'
 
-class Sanford::Protocol::Test::FakeSocket
+class Sanford::Protocol::FakeSocket
 
-  class BaseTests < Assert::Context
-    desc "a FakeSocket"
+  class UnitTests < Assert::Context
+    desc "Sanford::Protocol::FakeSocket"
     setup do
       @fs = FakeSocket.new
     end
@@ -27,7 +28,7 @@ class Sanford::Protocol::Test::FakeSocket
 
   end
 
-  class WithInDataTests < BaseTests
+  class WithInDataTests < UnitTests
     desc "created given some data"
     setup do
       @in_data = 'some in data'
@@ -51,7 +52,7 @@ class Sanford::Protocol::Test::FakeSocket
 
   end
 
-  class EncodedMessageTests < BaseTests
+  class EncodedMessageTests < UnitTests
     desc "with encoded msg data"
     setup do
       setup_some_msg_data
@@ -69,7 +70,7 @@ class Sanford::Protocol::Test::FakeSocket
 
   end
 
-  class RequestTests < BaseTests
+  class RequestTests < UnitTests
     desc "that is a request"
     setup do
       setup_some_request_data

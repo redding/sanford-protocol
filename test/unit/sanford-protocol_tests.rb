@@ -1,16 +1,17 @@
+require 'assert'
+require 'sanford-protocol'
+
 # These tests are intended to be brittle and make sure the protocol conforms to
 # an expected spec. If any of these tests fail, you probably need to modify the
 # protocol's version constant.
 
-require 'assert'
-require 'sanford-protocol'
-
 module Sanford::Protocol
-  class BaseTests < Assert::Context
+
+  class UnitTests < Assert::Context
     desc "Sanford::Protocol"
     subject{ Sanford::Protocol }
 
-    should have_instance_methods :msg_version, :msg_size, :msg_body
+    should have_imeths :msg_version, :msg_size, :msg_body
 
     should "define the protocol version" do
       assert_equal 2, subject::VERSION

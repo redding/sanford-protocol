@@ -5,7 +5,9 @@ require 'sanford-protocol/request'
 # environment. Instead of passing a real socket, pass an instance of this class.
 # It mimics the socket API that sanford is concerned with.
 
-module Sanford::Protocol::Test
+module Sanford; end
+module Sanford::Protocol
+
   class FakeSocket
 
     def self.with_request(*request_params)
@@ -64,4 +66,5 @@ module Sanford::Protocol::Test
     end
 
   end
+
 end
