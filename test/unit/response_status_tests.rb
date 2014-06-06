@@ -3,7 +3,7 @@ require 'sanford-protocol/response_status'
 
 class Sanford::Protocol::ResponseStatus
 
-  class BaseTests < Assert::Context
+  class UnitTests < Assert::Context
     desc "Sanford::Protocol::ResponseStatus"
     setup do
       @status = Sanford::Protocol::ResponseStatus.new(200, "OK")
@@ -11,7 +11,7 @@ class Sanford::Protocol::ResponseStatus
     subject{ @status }
 
     should have_readers :code_obj, :message
-    should have_instance_methods :code, :name, :to_i
+    should have_imeths :code, :name, :to_i
 
     should "know it's code name" do
       named  = Sanford::Protocol::ResponseStatus.new(200)

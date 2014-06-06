@@ -1,25 +1,27 @@
-require 'sanford-protocol/test/fake_socket'
+require 'sanford-protocol/fake_socket'
+require 'sanford-protocol/connection'
 require 'sanford-protocol/response'
 
-module Sanford::Protocol::Test
+module Sandord; end
+module Sanford::Protocol
 
-  module Helpers
+  module TestHelpers
     extend self
 
     def fake_socket_with_request(*args)
-      FakeSocket.with_request(*args)
+      Sanford::Protocol::FakeSocket.with_request(*args)
     end
 
     def fake_socket_with_msg_body(*args)
-      FakeSocket.with_msg_body(*args)
+      Sanford::Protocol::FakeSocket.with_msg_body(*args)
     end
 
     def fake_socket_with_encoded_msg_body(*args)
-      FakeSocket.with_encoded_msg_body(*args)
+      Sanford::Protocol::FakeSocket.with_encoded_msg_body(*args)
     end
 
     def fake_socket_with(*args)
-      FakeSocket.new(*args)
+      Sanford::Protocol::FakeSocket.new(*args)
     end
 
     def read_response_from_fake_socket(from_fake_socket)
@@ -28,7 +30,7 @@ module Sanford::Protocol::Test
     end
 
     def read_written_response_from_fake_socket(from_fake_socket)
-      read_response_from_fake_socket(FakeSocket.new(from_fake_socket.out))
+      read_response_from_fake_socket(Sanford::Protocol::FakeSocket.new(from_fake_socket.out))
     end
 
   end

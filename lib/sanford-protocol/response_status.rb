@@ -3,6 +3,7 @@
 
 module Sanford; end
 module Sanford::Protocol
+
   class ResponseStatus < Struct.new(:code_obj, :message)
 
     def initialize(code, message = nil)
@@ -43,4 +44,5 @@ module Sanford::Protocol
     end
 
   end
+
 end

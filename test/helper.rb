@@ -9,14 +9,14 @@ require 'pry'
 
 ENV['SANFORD_PROTOCOL_DEBUG'] = 'yes'
 
-require 'sanford-protocol/test/fake_socket'
-FakeSocket = Sanford::Protocol::Test::FakeSocket
+require 'sanford-protocol/fake_socket'
+FakeSocket = Sanford::Protocol::FakeSocket
 
 require 'assert-mocha' if defined?(Assert)
 
 class Assert::Context
 
-  def setup_some_msg_data(data=nil)
+  def setup_some_msg_data(data = nil)
     @data = data || { 'something' => true }
     @encoded_body    = Sanford::Protocol.msg_body.encode(@data)
     @encoded_size    = Sanford::Protocol.msg_size.encode(@encoded_body.bytesize)

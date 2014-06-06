@@ -19,6 +19,6 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency("bson", ["~> 1.7"])
 
-  gem.add_development_dependency("assert",       ["~> 2.3"])
-  gem.add_development_dependency("assert-mocha", ["~> 1.0"])
+  gem.add_development_dependency("assert",       ["~> 2.10"])
+  gem.add_development_dependency("assert-mocha", ["~> 1.1"])
 end

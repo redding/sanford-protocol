@@ -3,15 +3,15 @@ require 'sanford-protocol/request'
 
 class Sanford::Protocol::Request
 
-  class BaseTests < Assert::Context
+  class UnitTests < Assert::Context
     desc "Sanford::Protocol::Request"
     setup do
       @request = Sanford::Protocol::Request.new('some_service', { 'key' => 'value' })
     end
     subject{ @request }
 
-    should have_instance_methods :name, :params, :to_hash
-    should have_class_methods :parse
+    should have_imeths :name, :params, :to_hash
+    should have_cmeths :parse
 
     should "return it's name with #to_s" do
       assert_equal subject.name, subject.to_s
@@ -33,7 +33,7 @@ class Sanford::Protocol::Request
     should "return the request as a hash with stringified params with #to_hash" do
       # using BSON, messages are hashes
       request = Sanford::Protocol::Request.new('service', {
-        1       => 1,
+        1 => 1,
         :symbol => :symbol
       })
       expected = {
@@ -45,7 +45,7 @@ class Sanford::Protocol::Request
 
   end
 
-  class ValidTests < BaseTests
+  class ValidTests < UnitTests
 
     should "not raise an exception with valid request args" do
       assert_nothing_raised do

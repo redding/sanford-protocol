@@ -144,7 +144,7 @@ incoming_response = Sanford::Protocol::Response.parse(data_hash)
 
 ## Test Helpers
 
-A `FakeSocket` helper class and an associated `Test::Helpers` module are provided to help test receiving and sending Sanford::Protocol messages without using real sockets.
+A `FakeSocket` helper class and an associated `TestHelpers` module are provided to help test receiving and sending Sanford::Protocol messages without using real sockets.
 
 ```ruby
 # fake a socket with some incoming binary
