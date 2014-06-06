@@ -13,11 +13,21 @@ class Sanford::Protocol::Request
     should have_imeths :name, :params, :to_hash
     should have_cmeths :parse
 
+    should "know its name and params" do
+      assert_equal 'some_service', subject.name
+      assert_equal({ 'key' => 'value' }, subject.params)
+    end
+
+    should "force string request names" do
+      request = Sanford::Protocol::Request.new(:symbol_service_name, {})
+      assert_equal 'symbol_service_name', request.name
+    end
+
     should "return it's name with #to_s" do
       assert_equal subject.name, subject.to_s
     end
 
-    should "return an instance of a Sanford::Protocol::Request given a hash using #parse" do
+    should "parse requests given a body hash" do
       # using BSON messages are hashes
       hash = {
         'name'   => 'service_name',
