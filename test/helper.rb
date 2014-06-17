@@ -12,8 +12,6 @@ ENV['SANFORD_PROTOCOL_DEBUG'] = 'yes'
 require 'sanford-protocol/fake_socket'
 FakeSocket = Sanford::Protocol::FakeSocket
 
-require 'assert-mocha' if defined?(Assert)
-
 class Assert::Context
 
   def setup_some_msg_data(data = nil)

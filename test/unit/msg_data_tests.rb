@@ -30,93 +30,87 @@ class Sanford::Protocol::MsgData
   class BadSizeTests < BadMessageTests
     desc "that errors when reading the version part"
     setup do
-      @socket.stubs(:read).  # when reading the version, fail
-        with(Sanford::Protocol.msg_version.bytesize).
-        raises("simulated socket read error!")
-    end
-    teardown do
-      @socket.unstub(:read)
+      Assert.stub(@socket, :read).with(Sanford::Protocol.msg_version.bytesize) do
+        raises "simulated socket read error!"
+      end
     end
 
     should "raise a BadMessageError with a relevant message" do
       assert_bad_message "Error reading message protocol version"
     end
+
   end
 
   class BadVersionTests < BadMessageTests
     desc "that errors when reading the size part"
     setup do
-      @socket.stubs(:read).  # when reading the version, succeed
-        with(Sanford::Protocol.msg_version.bytesize).
-        returns(Sanford::Protocol.msg_version)
-      @socket.stubs(:read).  # when reading the size, fail
-        with(Sanford::Protocol.msg_size.bytes).
-        raises("simulated socket read error!")
-    end
-    teardown do
-      @socket.unstub(:read)
+      # when reading the version, succeed
+      Assert.stub(@socket, :read).with(Sanford::Protocol.msg_version.bytesize) do
+        Sanford::Protocol.msg_version
+      end
+      # when reading the size, fail
+      Assert.stub(@socket, :read).with(Sanford::Protocol.msg_size.bytes) do
+        raise "simulated socket read error!"
+      end
     end
 
     should "raise a BadMessageError with a relevant message" do
       assert_bad_message "Error reading message body size."
     end
+
   end
 
   class BadBodyTests < BadMessageTests
     desc "that errors when reading the body part"
     setup do
-      @socket.stubs(:read).  # when reading the version, succeed
-        with(Sanford::Protocol.msg_version.bytesize).
-        returns(Sanford::Protocol.msg_version)
-      @socket.stubs(:read).  # when reading the size, succeed
-        with(Sanford::Protocol.msg_size.bytes).
-        returns(Sanford::Protocol.msg_size.encode(50))
-      @socket.stubs(:read).  # when reading the body, fail
-        with(50).
-        raises("simulated socket read error!")
-    end
-    teardown do
-      @socket.unstub(:read)
+      # when reading the version, succeed
+      Assert.stub(@socket, :read).with(Sanford::Protocol.msg_version.bytesize) do
+        Sanford::Protocol.msg_version
+      end
+      # when reading the size, succeed
+      Assert.stub(@socket, :read).with(Sanford::Protocol.msg_size.bytes) do
+        Sanford::Protocol.msg_size.encode(50)
+      end
+      # when reading the body, fail
+      Assert.stub(@socket, :read).with(50){ raise "simulated socket read error!" }
     end
 
     should "raise a BadMessageError with a relevant message" do
       assert_bad_message "Error reading message body."
     end
+
   end
 
   class NilSizeTests < BadMessageTests
     desc 'that reads a nil size'
     setup do
-      @socket.stubs(:read).  # when reading the version, succeed
-        with(Sanford::Protocol.msg_version.bytesize).
-        returns(Sanford::Protocol.msg_version)
-      @socket.stubs(:read).  # when reading the size, return nil
-        with(Sanford::Protocol.msg_size.bytes).
-        returns(nil)
-    end
-    teardown do
-      @socket.unstub(:read)
+      # when reading the version, succeed
+      Assert.stub(@socket, :read).with(Sanford::Protocol.msg_version.bytesize) do
+        Sanford::Protocol.msg_version
+      end
+      # when reading the size, return nil
+      Assert.stub(@socket, :read).with(Sanford::Protocol.msg_size.bytes){ nil }
     end
 
     should "raise a BadMessageError with a relevant message" do
       assert_bad_message "Empty message size"
     end
+
   end
 
   class VersionMismatchTests < BadMessageTests
     desc "with a mismatched protocol version"
     setup do
-      @socket.stubs(:read).  # when reading the version, encode wrong number
-        with(Sanford::Protocol.msg_version.bytesize).
-        returns(Sanford::Protocol::PackedHeader.new(1, 'C').encode(0))
-    end
-    teardown do
-      @socket.unstub(:read)
+      # when reading the version, encode wrong number
+      Assert.stub(@socket, :read).with(Sanford::Protocol.msg_version.bytesize) do
+        Sanford::Protocol::PackedHeader.new(1, 'C').encode(0)
+      end
     end
 
     should "raise a BadMessageError with a relevant message" do
       assert_bad_message "Protocol version mismatch"
     end
+
   end
 
 end
