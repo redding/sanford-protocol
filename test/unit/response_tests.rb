@@ -45,6 +45,17 @@ class Sanford::Protocol::Response
       assert_equal expected, subject.to_hash
     end
 
+    should "be comparable" do
+      match_response = Sanford::Protocol::Response.new(
+        subject.status.dup,
+        subject.data.dup
+      )
+      assert_equal match_response, subject
+
+      not_match_response = Sanford::Protocol::Response.new(123, {})
+      assert_not_equal not_match_response, subject
+    end
+
   end
 
   # Somewhat of a system test, want to make sure if Response is passed some

@@ -35,6 +35,14 @@ module Sanford::Protocol
       " @params=#{params.inspect}>"
     end
 
+    def ==(other)
+      if other.kind_of?(self.class)
+        self.to_hash == other.to_hash
+      else
+        super
+      end
+    end
+
     protected
 
     def validate!(name, params)

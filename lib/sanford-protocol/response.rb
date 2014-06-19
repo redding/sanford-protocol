@@ -31,6 +31,14 @@ module Sanford::Protocol
       "#<#{self.class}:#{reference} @status=#{status} @data=#{data.inspect}>"
     end
 
+    def ==(other)
+      if other.kind_of?(self.class)
+        self.to_hash == other.to_hash
+      else
+        super
+      end
+    end
+
     private
 
     def build_status(status)

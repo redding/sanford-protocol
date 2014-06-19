@@ -53,6 +53,17 @@ class Sanford::Protocol::Request
       assert_equal expected, request.to_hash
     end
 
+    should "be comparable" do
+      match_request = Sanford::Protocol::Request.new(
+        subject.name.dup,
+        subject.params.dup
+      )
+      assert_equal match_request, subject
+
+      not_match_request = Sanford::Protocol::Request.new('other', {})
+      assert_not_equal not_match_request, subject
+    end
+
   end
 
   class ValidTests < UnitTests
