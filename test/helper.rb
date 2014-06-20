@@ -12,6 +12,8 @@ ENV['SANFORD_PROTOCOL_DEBUG'] = 'yes'
 require 'sanford-protocol/fake_socket'
 FakeSocket = Sanford::Protocol::FakeSocket
 
+require 'test/support/factory'
+
 class Assert::Context
 
   def setup_some_msg_data(data = nil)
