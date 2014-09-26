@@ -10,15 +10,21 @@ class Sanford::Protocol::Response
     end
     subject{ @response }
 
-    should have_imeths :status, :code, :data, :to_hash, :to_s
+    should have_imeths :status, :data, :to_hash
+    should have_imeths :code, :code=, :message, :message=, :to_s
     should have_cmeths :parse
 
-    should "return its status#code with #code" do
+    should "demeter its status" do
       assert_equal subject.status.code, subject.code
-    end
-
-    should "return its status#to_s with #to_s" do
+      assert_equal subject.status.message, subject.message
       assert_equal subject.status.to_s, subject.to_s
+
+      new_code = Factory.integer
+      new_message = Factory.string
+      subject.code = new_code
+      subject.message = new_message
+      assert_equal new_code, subject.code
+      assert_equal new_message, subject.message
     end
 
     should "return an instance of a Sanford::Protocol::Response given a hash using #parse" do

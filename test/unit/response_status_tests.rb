@@ -11,7 +11,7 @@ class Sanford::Protocol::ResponseStatus
     subject{ @status }
 
     should have_readers :code_obj, :message
-    should have_imeths :code, :name, :to_i
+    should have_imeths :code, :code=, :name, :to_i
 
     should "know it's code name" do
       named  = Sanford::Protocol::ResponseStatus.new(200)
@@ -33,6 +33,12 @@ class Sanford::Protocol::ResponseStatus
 
     should "return it's code number with #to_i" do
       assert_equal subject.code, subject.to_i
+    end
+
+    should "allow setting its code" do
+      number = Factory.integer
+      subject.code = number
+      assert_equal number, subject.code
     end
 
     should "return it's code number and code name with #to_s" do
