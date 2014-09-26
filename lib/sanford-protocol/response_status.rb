@@ -10,8 +10,12 @@ module Sanford::Protocol
       super(Code.new(code), message)
     end
 
-    def code; code_obj.number; end
+    def code; self.code_obj.number; end
     alias_method :to_i, :code
+
+    def code=(new_code)
+      self.code_obj = Code.new(new_code)
+    end
 
     def name; code_obj.name; end
     def to_s; code_obj.to_s; end
