@@ -6,85 +6,76 @@ class Sanford::Protocol::Request
   class UnitTests < Assert::Context
     desc "Sanford::Protocol::Request"
     setup do
-      @request = Sanford::Protocol::Request.new('some_service', { 'key' => 'value' })
+      @name   = Factory.string
+      @params = { Factory.string => Factory.string }
+      @request_class = Sanford::Protocol::Request
     end
-    subject{ @request }
+    subject{ @request_class }
 
-    should have_imeths :name, :params, :to_hash
-    should have_cmeths :parse
+    should have_imeths :parse
 
-    should "know its name and params" do
-      assert_equal 'some_service', subject.name
-      assert_equal({ 'key' => 'value' }, subject.params)
-    end
-
-    should "force string request names" do
-      request = Sanford::Protocol::Request.new(:symbol_service_name, {})
-      assert_equal 'symbol_service_name', request.name
-    end
-
-    should "return it's name with #to_s" do
-      assert_equal subject.name, subject.to_s
-    end
-
-    should "parse requests given a body hash" do
-      # using BSON messages are hashes
-      hash = {
-        'name'   => 'service_name',
-        'params' => { 'service_params' => 'yes' }
-      }
-      request = Sanford::Protocol::Request.parse(hash)
-
-      assert_instance_of Sanford::Protocol::Request, request
-      assert_equal hash['name'],   request.name
-      assert_equal hash['params'], request.params
-    end
-
-    should "return the request as a hash with stringified params with #to_hash" do
-      # using BSON, messages are hashes
-      request = Sanford::Protocol::Request.new('service', {
-        1 => 1,
-        :symbol => :symbol
+    should "parse a request from a body hash" do
+      request = @request_class.parse({
+        'name'   => @name,
+        'params' => @params
       })
-      expected = {
-        'name'   => 'service',
-        'params' => { '1' => 1, 'symbol' => :symbol }
-      }
-      assert_equal expected, request.to_hash
-    end
 
-    should "be comparable" do
-      match_request = Sanford::Protocol::Request.new(
-        subject.name.dup,
-        subject.params.dup
-      )
-      assert_equal match_request, subject
-
-      not_match_request = Sanford::Protocol::Request.new('other', {})
-      assert_not_equal not_match_request, subject
+      assert_instance_of @request_class, request
+      assert_equal @name,   request.name
+      assert_equal @params, request.params
     end
 
   end
 
-  class ValidTests < UnitTests
+  class InitTests < UnitTests
+    desc "when init"
+    setup do
+      @request = @request_class.new(@name, @params)
+    end
+    subject{ @request }
 
-    should "not raise an exception with valid request args" do
-      assert_nothing_raised do
-        Sanford::Protocol::Request.new('name', {})
-      end
+    should have_imeths :name, :params, :to_hash
+
+    should "know its name and params" do
+      assert_equal @name,   subject.name
+      assert_equal @params, subject.params
     end
 
-    should "raise an exception when there isn't a name arg" do
-      assert_raises(Sanford::Protocol::BadRequestError) do
-        Sanford::Protocol::Request.new(nil, {})
-      end
+    should "force string request names" do
+      request = @request_class.new(@name.to_sym, {})
+      assert_equal @name, request.name
     end
 
-    should "return false and a message when the params are not a Hash" do
-      assert_raises(Sanford::Protocol::BadRequestError) do
-        Sanford::Protocol::Request.new('name', true)
-      end
+    should "return its name using `to_s`" do
+      assert_equal subject.name, subject.to_s
     end
+
+    should "return the request as a hash using `to_hash`" do
+      @params[Factory.integer]       = Factory.integer
+      @params[Factory.string.to_sym] = Factory.string.to_sym
+      request = @request_class.new(@name, @params)
+      exp = {
+        'name'   => @name,
+        'params' => Sanford::Protocol::StringifyParams.new(@params)
+      }
+      assert_equal exp, request.to_hash
+    end
+
+    should "be comparable" do
+      matching = @request_class.new(@name, @params)
+      assert_equal matching, subject
+
+      non_matching = @request_class.new(Factory.string, @params)
+      assert_not_equal non_matching, subject
+      non_matching = @request_class.new(@name, Factory.string => Factory.string)
+      assert_not_equal non_matching, subject
+    end
+
+    should "raise an error when given invalid attributes" do
+      assert_raises(InvalidError){ @request_class.new(nil, @params) }
+      assert_raises(InvalidError){ @request_class.new(@name, Factory.string) }
+    end
+
   end
 
 end

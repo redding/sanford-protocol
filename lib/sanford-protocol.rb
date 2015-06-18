@@ -49,5 +49,18 @@ module Sanford
       def decode(binary); ::BSON.deserialize(binary); end
     end
 
+    module StringifyParams
+      def self.new(object)
+        case(object)
+        when Hash
+          object.inject({}){ |h, (k, v)| h.merge(k.to_s => self.new(v)) }
+        when Array
+          object.map{ |item| self.new(item) }
+        else
+          object
+        end
+      end
+    end
+
   end
 end
