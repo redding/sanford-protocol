@@ -1,11 +1,7 @@
-# The Request class models a specific type of Sanford message body and provides
-# a defined structure for it. A request requires a message body to contain a
-# name and params.
+require 'sanford-protocol'
 
 module Sanford; end
 module Sanford::Protocol
-
-  BadRequestError = Class.new(RuntimeError)
 
   class Request
 
@@ -17,12 +13,13 @@ module Sanford::Protocol
 
     def initialize(name, params)
       self.validate!(name, params)
-      @name, @params = name.to_s, params
+      @name   = name.to_s
+      @params = params
     end
 
     def to_hash
       { 'name'   => name,
-        'params' => self.stringify(params)
+        'params' => Sanford::Protocol::StringifyParams.new(params)
       }
     end
 
@@ -49,21 +46,12 @@ module Sanford::Protocol
       problem = if !name
         "The request doesn't contain a name."
       elsif !params.kind_of?(::Hash)
-        "The request's params are not a valid BSON document."
+        "The request's params are not valid."
       end
-      raise(BadRequestError, problem) if problem
+      raise(InvalidError, problem) if problem
     end
 
-    def stringify(object)
-      case(object)
-      when Hash
-        object.inject({}){|h, (k, v)| h.merge({ k.to_s => self.stringify(v) }) }
-      when Array
-        object.map{|item| self.stringify(item) }
-      else
-        object
-      end
-    end
+    InvalidError = Class.new(ArgumentError)
 
   end
 
