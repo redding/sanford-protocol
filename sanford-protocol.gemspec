@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = Sanford::Protocol::GEM_VERSION
   gem.authors       = ["Collin Redding", "Kelly Redding"]
   gem.email         = ["collin.redding@me.com", "kelly@kellyredding.com"]
-  gem.description   = "Ruby implementation of the Sanford TCP communication protocol."
   gem.summary       = "Ruby implementation of the Sanford TCP communication protocol."
+  gem.description   = "Ruby implementation of the Sanford TCP communication protocol."
   gem.homepage      = "https://github.com/redding/sanford-protocol"
 
   gem.files         = `git ls-files`.split($/)
@@ -17,7 +17,8 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 
+  gem.add_development_dependency("assert", ["~> 2.15.1"])
+
   gem.add_dependency("bson", ["~> 1.7", "< 1.10.0"])
 
-  gem.add_development_dependency("assert", ["~> 2.11"])
 end
