@@ -44,7 +44,7 @@ class Sanford::Protocol::Connection
     def start_server(options, &block)
       begin
         # this `fork` is a separate process, so it runs parallel to the code
-        # after it's block
+        # after its block
         pid = fork do
           tcp_server = TCPServer.open 'localhost', 12000
           trap("TERM"){ tcp_server.close }

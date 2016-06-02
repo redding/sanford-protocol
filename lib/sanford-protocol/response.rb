@@ -13,18 +13,18 @@ module Sanford::Protocol
       self.new(hash['status'], hash['data'])
     end
 
-    def initialize(status, data=nil)
+    def initialize(status, data = nil)
       super(build_status(status), data)
     end
 
-    def code;                  status.code;                  end
-    def code=(new_code);       status.code = new_code;       end
-    def message;               status.message;               end
-    def message=(new_message); status.message = new_message; end
-    def to_s;                  status.to_s;                  end
+    def code;            status.code;            end
+    def code=(value);    status.code = value;    end
+    def message;         status.message;         end
+    def message=(value); status.message = value; end
+    def to_s;            status.to_s;            end
 
     def to_hash
-      { 'status' => [ status.code, status.message ],
+      { 'status' => [status.code, status.message],
         'data'   => data
       }
     end
