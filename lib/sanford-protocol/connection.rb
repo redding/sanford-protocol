@@ -21,7 +21,7 @@ module Sanford::Protocol
     # |   msg version   |  msg body size  |       msg body       |
     # |-----------------|-----------------|----------------------|
 
-    def read(timeout=nil)
+    def read(timeout = nil)
       wait_for_data(timeout) if timeout
       MsgVersion.new{ @socket.read msg_version.bytesize }.validate!
       size = MsgSize.new{ @socket.decode msg_size, msg_size.bytes }.validate!.value
@@ -35,7 +35,7 @@ module Sanford::Protocol
       @socket.write(msg_version, size, body)
     end
 
-    def peek(timeout=nil)
+    def peek(timeout = nil)
       wait_for_data(timeout) if timeout
       @socket.peek
     end

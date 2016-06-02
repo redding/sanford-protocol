@@ -2,7 +2,7 @@ module Sanford; end
 module Sanford::Protocol
 
   class BadMessageError < RuntimeError
-    def initialize(message, bt=nil)
+    def initialize(message, bt = nil)
       super(message)
       set_backtrace(bt || caller)
     end
@@ -11,7 +11,7 @@ module Sanford::Protocol
   class MsgData
     attr_reader :value
 
-    def initialize(called_from=nil, &get_value)
+    def initialize(called_from = nil, &get_value)
 
       # By default, any exceptions from getting the value are "hidden" behind a
       # more general `BadMessageError`. In non-debug scenarios this is ideal and

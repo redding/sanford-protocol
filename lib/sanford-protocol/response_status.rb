@@ -26,25 +26,21 @@ module Sanford::Protocol
     end
 
     class Code < Struct.new(:number, :name)
-      NUMBERS = {
-        'ok'          => 200,
-        'bad_request' => 400,
-        'not_found'   => 404,
-        'timeout'     => 408,
-        'error'       => 500
+      NAMES = {
+        200 => 'OK',
+        400 => 'BAD REQUEST',
+        404 => 'NOT FOUND',
+        408 => 'TIMEOUT',
+        422 => 'INVALID',
+        500 => 'ERROR'
       }.freeze
 
-      def initialize(key)
-        num  = NUMBERS[key.to_s]  || key.to_i
-        name = NUMBERS.index(num) || NoName
-        super(num, name.upcase)
+      def initialize(number)
+        n = number.to_i
+        super(n, NAMES[n])
       end
 
       def to_s; "[#{[number, name].compact.join(', ')}]"; end
-
-      class NoName
-        def self.upcase; nil; end
-      end
     end
 
   end

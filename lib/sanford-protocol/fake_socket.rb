@@ -15,13 +15,13 @@ module Sanford::Protocol
       self.with_msg_body(request.to_hash)
     end
 
-    def self.with_msg_body(body, size=nil, encoded_version=nil)
+    def self.with_msg_body(body, size = nil, encoded_version = nil)
       encoded_body = Sanford::Protocol.msg_body.encode(body)
       self.with_encoded_msg_body(encoded_body, size, encoded_version)
     end
 
-    def self.with_encoded_msg_body(encoded_body, size=nil, encoded_version=nil)
-      encoded_size    =   Sanford::Protocol.msg_size.encode(size || encoded_body.bytesize)
+    def self.with_encoded_msg_body(encoded_body, size = nil, encoded_version = nil)
+      encoded_size      = Sanford::Protocol.msg_size.encode(size || encoded_body.bytesize)
       encoded_version ||= Sanford::Protocol.msg_version
       self.new(encoded_version, encoded_size, encoded_body)
     end
