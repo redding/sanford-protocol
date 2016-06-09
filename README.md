@@ -76,11 +76,12 @@ response.data           #=> true
 
 This is the list of defined status codes.
 
-* `200` - `ok` - The request was successful.
-* `400` - `bad_request` - The request couldn't be read. This is usually because it was not formed correctly.
-* `404` - `not_found` - The server couldn't find something requested.
-* `408` - `timeout` - A client connected but didn't write a request before the server timeod out waiting for one.
-* `500` - `error` - The server errored responding to the request.
+* `200` - `OK`- The request was successful.
+* `400` - `BAD REQUEST` - The request couldn't be read. This is usually because it was not formed correctly.
+* `404` - `NOT FOUND` - The server couldn't find something requested.
+* `408` - `TIMEOUT` - A client connected but didn't write a request before the server timeod out waiting for one.
+* `422` - `INVALID` - The request was sent with invalid params.
+* `500` - `ERROR` - The server errored responding to the request.
 
 In addition to these, a service can return custom status codes, but they should use a number greater than or equal to `600` to avoid collisions with Sanford's defined status codes.
 
